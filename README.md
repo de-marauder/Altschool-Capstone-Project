@@ -1,7 +1,7 @@
 # Altschool Capstone Project
 ## Group 23
 
-
+<img src='./assets/architecture-diagram.png' alt='Architectural diagram'>
 
 ### Infrastructure
 
