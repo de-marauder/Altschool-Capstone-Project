@@ -1,0 +1,56 @@
+<h2>Search books</h2>
+<br />
+
+<form class="book-full-details" action="/books" method="GET">
+    <div class="detail">
+      <div class="detail form col">
+        <label for="title">Title</label>
+        <input
+          name="title"
+          type="text"
+          value="<%=searchOptions.title%>"
+        />
+      </div>
+      <div class="detail form col">
+        <label for="author">Author</label>
+        <select name="author" type="text">
+          <option label="select Author">
+            <% authors.forEach(author => { %> <% if (searchOptions.author ===
+            author.id) { %>
+          </option>
+
+          <option selected label="<%= author.name %>" value="<%= author.id %>">
+            <% } else { %>
+          </option>
+
+          <option label="<%= author.name %>" value="<%= author.id %>">
+            <% } %> <% }) %>
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="detail">
+      <div class="detail form col">
+        <label for="publishedAfter">Published After</label>
+        <input
+          name="publishedAfter"
+          type="date"
+          value="<%=searchOptions.publishedAfter  %>"
+        />
+      </div>
+      <div class="detail form col">
+        <label for="publishedBefore">Published Before</label>
+        <input
+          name="publishedBefore"
+          type="date"
+          value="<%=searchOptions.publishedBefore%>"
+        />
+      </div>
+    </div>
+  <button class="btn right btn-primary" type="submit">Search</button>
+</form>
+<br />
+<div class="book-grid">
+  <% books.forEach((book, i)=> { %> <%- include('../partials/min-det-book',
+  {book: book, id: i, bookAuthors: bookAuthors}) %> <% }) %>
+</div>

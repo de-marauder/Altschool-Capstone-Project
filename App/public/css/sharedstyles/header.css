@@ -1,0 +1,40 @@
+.nav-header-title {
+  font-size: 2rem;
+}
+header, footer {
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  margin-top: 2rem;
+}
+header a, footer a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+header a:hover, footer a:hover {
+  color: white;
+}
+
+header ul, footer ul {
+    display: flex;
+}
+header ul li, footer ul li {
+    list-style: none;
+}
+.nav-item a {
+    margin-left: 1rem
+}
+
+footer > p a.name {
+  color: var(--text-color-light);
+}
+footer > p a.name:hover {
+  color: var(--text-color);
+  text-decoration: underline;
+}

@@ -1,0 +1,10 @@
+<div class="flex">
+  <h3><%- author.name %></h3>
+  <div class="flex">
+    <a class="btn btn-primary" href="/authors/author/<%= author._id %>/edit">edit</a>
+    <a class="btn btn-primary" href="/authors/author/<%= author._id %>">show</a>
+    <form action="/authors/author/<%= author._id %>?_method=DELETE" method="POST" >
+      <button class="btn btn-danger" type="submit">delete</button>
+    </form>
+  </div>
+</div>

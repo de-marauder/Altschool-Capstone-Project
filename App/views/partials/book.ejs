@@ -1,0 +1,42 @@
+<div class="single-book">
+  <div class="large-book grid-item">
+    <div>
+      <a href="/books/book/<%= book._id %>">
+        <img src="<%=book.cover_src%>" />
+      </a>
+    </div>
+    <div>
+      <div class="form-row">
+        <a class="btn btn-primary" href="/books/book/<%= book._id %>/edit"
+          >edit</a
+        >
+        <a class="btn btn-primary" href="/books/book/<%= book._id %>">show</a>
+      </div>
+      <form action="/books/book/<%= book._id %>?_method=DELETE" method="POST">
+        <button class="btn btn-danger" type="submit">delete</button>
+      </form>
+    </div>
+  </div>
+  <div class="book-full-details">
+    <div class="detail">
+      <p>Title:</p>
+      <p><%= book.title %></p>
+    </div>
+    <div class="detail">
+      <p>
+        Author: </p><p><% if (locals.bookAuthor) { %> <%= bookAuthor.name %> <% } else
+        if (locals.bookAuthors) { %> <%= bookAuthors[i].name %> <% } %>
+      </p>
+    </div>
+    <div class="detail">
+      <p>Publish date: </p><p><%= book.publishDate.toDateString() %></p>
+    </div>
+    <div class="detail">
+      <p>Page count: </p><p><%= book.pageCount %></p>
+    </div>
+    <div class="detail">
+      <p>Description: </p><p><%= book.description %></p>
+    </div>
+  </div>
+</div>
+<br />

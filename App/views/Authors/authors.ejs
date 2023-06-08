@@ -1,0 +1,11 @@
+<h2>
+    All Authors
+</h2>
+<br>
+<hr>
+<br>
+
+
+<% authors.forEach(author => { %>
+    <%- include('../partials/author', {author: author}) %> 
+<% }) %>

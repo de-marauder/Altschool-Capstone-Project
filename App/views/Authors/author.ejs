@@ -1,0 +1,21 @@
+<%= locals.updated %> 
+<% if (locals.postState === 'updated') { %>
+ 
+    <p>Author with id <%= author._id %> has been updated</p>
+<% } else if (locals.postState === 'created') { %>
+    <p>A new author with id <strong><%= author._id %></strong> has been created</p>
+<% } %> 
+
+<%- include('../partials/author', {author: author}); %>
+
+<% if (books.length > 0) { %>
+    <h3>This author's books include:</h3>
+<% } else {%>
+    <h3>This author has no books yet</h3>
+<% } %>
+
+<div class="book-grid">
+    <% books.forEach(book => { %>
+    <%- include('../partials/min-det-book', {book: book}) %> 
+<% }) %>
+</div>

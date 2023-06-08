@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Not your typical library." />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../../public/favicon.io/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../../public/favicon.io/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../../public/favicon.io/favicon-16x16.png"
+    />
+    <link rel="manifest" href="../../public/favicon.io/site.webmanifest" />
+
+    <link
+      href="https://unpkg.com/filepond@^4/dist/filepond.css"
+      rel="stylesheet"
+    />
+
+    <script
+      defer
+      src="https://unpkg.com/filepond-plugin-file-encode/dist/filepond-plugin-file-encode.js"
+    ></script>
+
+    <link
+      href="https://unpkg.com/filepond/dist/filepond.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+      rel="stylesheet"
+    />
+
+    <script
+      defer
+      src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"
+    ></script>
+
+    <script
+      defer
+      src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"
+    ></script>
+    <script defer src="https://unpkg.com/filepond/dist/filepond.js"></script>
+
+    <script defer src="/javascript/index.js"></script>
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <title>Zombrary</title>
+  </head>
+  <body class="container">
+    <%- include('../partials/header.ejs') %>
+    <hr />
+    <div class="content-container">
+        <%-include('../partials/error.ejs') %> 
+        <%- body %>
+    </div>
+      <%-include('../partials/footer.ejs') %>
+  </body>
+
+  <script defer src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+</html>

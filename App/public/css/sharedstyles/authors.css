@@ -1,0 +1,8 @@
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex .btn {
+    margin-left: 1rem;
+}

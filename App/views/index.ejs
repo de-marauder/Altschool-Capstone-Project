@@ -1,0 +1,7 @@
+<h2 class="header-title">Recently Added</h2>
+<div class="book-grid">
+  <% books.forEach((book, id) => { %>
+<%- include('./partials/min-det-book', {book: book, id: id, bookAuthors: bookAuthors}) %> 
+<% }) %> 
+</div>
+

@@ -1,0 +1,16 @@
+
+<h2>Search Authors</h2>
+<br>
+
+<form action="/authors" method="GET">
+  <div class="detail form col">
+    <label for="search">Name</label>
+    <input name="name" type="text" value="<%=search%>" />
+  </div>
+  <button class="btn btn-primary right" type="submit">search</button>
+</form>
+<br>
+<br>
+<br>
+
+<%- include('./authors.ejs') %>

@@ -1,0 +1,9 @@
+<%= locals.updated %> 
+<% if (locals.postState === 'updated') { %>
+     <p>The book with id of  <%= id %> has been updated</p>
+<% } else if (locals.postState === 'created') { %>
+    <p>A new book with id <%= id %> has been created</p>
+<% } %> 
+
+
+<%- include('../partials/book', {book: book, bookAuthor: bookAuthor}); %>

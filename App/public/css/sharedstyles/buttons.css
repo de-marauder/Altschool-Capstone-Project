@@ -1,0 +1,34 @@
+:root {
+    --color-offset: 180;
+    --color-danger: hsl(calc(var(--background-hue) - var(--color-offset)), 100%, 60%);
+    --color-danger-light: hsl(calc(var(--background-hue) - var(--color-offset)), 100%, 50%);
+}
+.btn {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    margin: 0.5rem 0;
+    text-decoration: none;
+    color: var(--background-color-light);
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--text-color);
+}
+.btn-danger {
+    background-color: var(--color-danger);
+}
+.btn-primary:hover {
+    background-color: var(--text-color-light);
+}
+.btn-danger:hover {
+    background-color: var(--color-danger-light);
+}
+
+.right {
+    float: right;
+    margin-left: 0.5rem
+}

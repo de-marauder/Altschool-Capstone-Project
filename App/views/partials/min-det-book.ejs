@@ -1,0 +1,13 @@
+<a href="/books/book/<%= book._id %>">
+<div class="grid-item large-book">
+  <div>
+      <img src="<%= book.cover_src%>" />
+    </div>
+    <div class="book-min-details">
+      <p><strong><%= book.title %></strong></p>
+      <% if (locals.bookAuthors) { %> 
+        <p><%= bookAuthors[id].name %></p>
+        <% } %> 
+    </div>
+  </div>
+</a>
