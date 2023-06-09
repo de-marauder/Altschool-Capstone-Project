@@ -39,15 +39,23 @@ jobs:
       TAGS_FLAVOR: |
         latest=false
     steps:
-      - name: Check for changes in App folder
-        id: check_changes
-        run: |
-          echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}...${{ github.sha }})" >> $GITHUB_ENV
+      - name: Create temporary directory
+        id: tempdir
+        run: echo "::set-output name=path::$(mktemp -d)"
 
       # https://github.com/actions/checkout
       - name: Checkout codebase
         uses: actions/checkout@v3.3.0
-        if: ${{ contains(env.CHANGED_FILES, 'App') }}
+        with:
+          path: ${{ steps.tempdir.outputs.path }}
+
+      - name: Check for changes in App folder
+        id: check_changes
+        run: |
+          cd ${{ steps.tempdir.outputs.path }}
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}...${{ github.sha }})
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+
 
       # https://github.com/docker/setup-buildx-action
       - name: Setup Docker Buildx
