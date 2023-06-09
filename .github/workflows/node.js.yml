@@ -7,12 +7,15 @@ on:
       - App
       - Infrastructure
       - assets
+      - terraform
+
   pull_request:
     branches: ["master"]
     paths:
       - App
       - Infrastructure
       - assets
+      - terraform
 
 jobs:
   build:
