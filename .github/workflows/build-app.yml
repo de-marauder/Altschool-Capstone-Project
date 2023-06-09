@@ -60,9 +60,9 @@ jobs:
         run: |
           cd App
           docker image build \
-          --tag ${{ secrets.DOCKER_USERNAME }}/zombrary:latest \
-          --tag ${{ secrets.DOCKER_USERNAME }}/zombrary:${{ env.SHORT_SHA }} \
+          --tag ${{ secrets.DOCKERHUB_USERNAME }}/zombrary:latest \
+          --tag ${{ secrets.DOCKERHUB_USERNAME }}/zombrary:${{ env.SHORT_SHA }} \
           .
-          docker push ${{ secrets.DOCKER_USERNAME }}/zombrary:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/zombrary:${{ env.SHORT_SHA }}   
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/zombrary:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/zombrary:${{ env.SHORT_SHA }}   
         
