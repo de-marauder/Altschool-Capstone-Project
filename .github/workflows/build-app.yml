@@ -1,5 +1,9 @@
 name: Docker Build and Push
 
+####################################################################################################
+# You still need to find a way to make this run only when there is a change in the `App` directory #
+####################################################################################################
+
 # Run this Build for all pushes to 'main' branch, or tagged releases.
 on:
   push:
@@ -35,13 +39,20 @@ jobs:
       TAGS_FLAVOR: |
         latest=false
     steps:
+      - name: Check for changes in App folder
+        id: check_changes
+        run: |
+          echo "::set-output name=changes::$(git diff --name-only ${{ github.event.before }}...${{ github.sha }})"
+
       # https://github.com/actions/checkout
       - name: Checkout codebase
         uses: actions/checkout@v3.3.0
+        if: ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
 
       # https://github.com/docker/setup-buildx-action
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
+        if: ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
 
       # https://github.com/docker/login-action
       - name: Login to DockerHub
@@ -51,11 +62,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        if: ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
 
       ###############################################
       # Build/Push the 'demarauder/zombrary' image
       ###############################################
       - name: Build, tag, and push image to Docker hub
+        if: ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
         id: build-image
         run: |
           cd App
