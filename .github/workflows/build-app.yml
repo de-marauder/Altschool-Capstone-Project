@@ -55,7 +55,8 @@ jobs:
           # echo ${{ steps.tempdir.outputs.path }}
           # ls ${{ steps.tempdir.outputs.path }}
           cd ${{ steps.tempdir.outputs.path }}
-          CHANGED_FILES=$(git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }} -- App/)
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}...${{ github.sha }} -- App/)
+          # CHANGED_FILES=$(git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }} -- App/)
           # CHANGED_FILES=$(git diff --name-only HEAD~1...HEAD -- App/)
           echo "CHANGED_FILES=$CHANGED_FILES"
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
