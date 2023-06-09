@@ -18,3 +18,14 @@
 - Security Group Setup: Defined security groups for the instances, one for the bastion host and another for the database instance. Carefully specifying the inbound and outbound rules allowed to control traffic access effectively.
 
 - Private Subnet Configuration: With Terraform, a private subnet within the VPC was successfully created. By specifying the CIDR block and availability zone, and associating it with a separate route table without a default route to the internet gateway, enhanced security was established.
+
+
+# Configuration Management
+
+Configuration is handled using ansible. Config files can be found [here](./ansible).
+
+For initial setup, an ansible role is used to setup monitoring on all servers.
+
+```bash
+ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/ --tags server --limit 'monitoring-server' --private-key <path-to-private-key-file>
+```
