@@ -1,0 +1,19 @@
+- name: Install Python Package
+  apt: name=python3 update_cache=yes state=latest
+
+- name: Install Let's Encrypt Package
+  apt:
+    name:
+      - certbot
+      - "{{ certbot_package }}"
+    update_cache: yes
+    state: latest
+
+- name: Create and Install Cert Using {{ certbot_plugin }} Plugin
+  command: "certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect"
+  loop: "{{ certbot_site_names }}"
+  tags: server
+
+- name: Set Letsencrypt Cronjob for Certificate Auto Renewal
+  cron: name=letsencrypt_renewal special_time=monthly job="/usr/bin/certbot renew"
+  # when: ansible_facts['os_family'] == "Debian"

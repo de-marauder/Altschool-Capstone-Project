@@ -1,0 +1,137 @@
+---
+# Make srv nginx folder
+# - name: install nginx
+#   apt:
+#     name: nginx
+#     state: latest
+#   tags:
+#     - server
+#     - agent
+
+- name: Create folders
+  file:
+    state: directory
+    name: "/srv/{{ item }}"
+    recurse: yes
+    mode: "a+rw"
+  loop:
+  - nginx
+  - nginx/logs
+  tags:
+  - agent
+  - server
+
+# Configure NGINX
+# - name: Create private key (RSA, 4096 bits)
+#   community.crypto.openssl_privatekey:
+#     path: "/srv/nginx/certificate.key"
+#   tags:
+#   - agent
+#   - server
+# - name: Create simple self-signed certificate
+#   community.crypto.x509_certificate:
+#     path: /srv/nginx/certificate.pem
+#     privatekey_path: /srv/nginx/certificate.key
+#     provider: selfsigned
+#   tags:
+#   - agent
+#   - server
+
+- name: Add a user to a password file and ensure permissions are set
+  community.general.htpasswd:
+    path: /srv/nginx/.htpasswd
+    name: "{{ htaccessusr }}"
+    password: '{{ htaccesspwd }}'
+    mode: a+r
+  tags:
+  - agent
+  - server
+
+# - name: Copy monitor server nginx config
+#   template:
+#     src: nginx/monitor_server_nginx.conf
+#     dest: /etc/nginx/nginx.conf
+#   tags:
+#   - server
+# - name: Copy monitor server nginx config
+#   template:
+#     src: nginx/agent_server_nginx.conf
+#     dest: /etc/nginx/nginx.conf
+#   tags:
+#   - agent
+- name: Copy the servers nginx configuration
+  template:
+    src: nginx/server_nginx.conf
+    dest: /srv/nginx/nginx.conf
+  tags:
+  - server
+- name: Copy the agent nginx configuration
+  template:
+    src: nginx/agent_nginx.conf
+    dest: /srv/nginx/nginx.conf
+  tags:
+  - agent
+
+# Reverse proxy
+- name: Deploy nginx
+  docker_container:
+    image: nginx:1.23.1-alpine
+    name: nginx
+    restart_policy: always
+    restart: yes
+    networks:
+      name=monitoring
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3100:3100"
+      - "9090:9090"
+      - "9100:9100"
+      - "9323:9323"
+      - "9324:9324"
+    mounts:
+      type=bind
+      source=/srv/nginx
+      target=/etc/nginx
+  tags:
+  - server
+- name: Deploy nginx
+  docker_container:
+    image: nginx:1.23.1-alpine
+    name: nginx
+    restart_policy: always
+    restart: yes
+    recreate: yes
+    networks:
+      name=monitoring
+    ports:
+      - "3100:3100"
+      - "9100:9100"
+      - "9323:9323"
+      - "9324:9324"
+    mounts:
+      type=bind
+      source=/srv/nginx
+      target=/etc/nginx
+  tags:
+  - agent
+
+- name: Grant SSL certs inside nginx Docker container
+  shell: |
+    docker exec -i nginx sh -c '
+    apk update
+    apk add certbot-nginx
+    certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
+    '
+  run_once: true
+  loop: "{{ certbot_site_names }}"
+  tags: server
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    docker_command: "docker exec -i nginx sh"
+
+  register: command_output
+
+- name: Display command output
+  debug:
+    var: command_output.stdout_lines
