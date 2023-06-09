@@ -1,20 +1,18 @@
 name: Terraform CI-CD
 
 on:
-  workflow_dispatch:
   push:
-    branches: ["main"]
     paths:
-      - Infrastructure
+      - Infrastructure/**
+    branches:
+      - main
 
-  pull_request:
-    branches: ["main"]
-    paths:
-      - Infrastructure
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
           
-  terraform:
+  terraform-setup:
     runs-on: ${{matrix.os}}
     strategy:
       matrix:

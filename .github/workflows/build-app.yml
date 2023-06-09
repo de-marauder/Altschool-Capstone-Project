@@ -1,9 +1,7 @@
 name: Docker Build and Push
 
 ####################################################################################################
-# You still need to find a way to make this run only when there is a change in the `App` directory #
-####################################################################################################
-#  This works now ================================================================================ #
+## This works now ================================================================================ #
 ####################################################################################################
 
 # Run this Build for all pushes to 'main' branch, or tagged releases.
@@ -14,8 +12,6 @@ on:
     branches:
       - main
 
-    tags:
-      - 'v**'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -28,54 +24,21 @@ permissions:
 jobs:
   docker-build-push:
     runs-on: ubuntu-latest
-    # env:
-      # Define tags to use for Docker images based on Git tags/branches (for docker/metadata-action)
-      # For a new commit on default branch (main), use the literal tag 'latest' on Docker image.
-      # For a new commit on other branches, use the branch name as the tag for Docker image.
-      # For a new tag, copy that tag name as the tag for Docker image.
-      # IMAGE_TAGS: |
-      #   type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
-      #   type=ref,event=branch,enable=${{ !endsWith(github.ref, github.event.repository.default_branch) }}
-      #   type=ref,event=tag
-      # # Define default tag "flavor" for docker/metadata-action per
-      # # https://github.com/docker/metadata-action#flavor-input
-      # # We turn off 'latest' tag by default.
-      # TAGS_FLAVOR: |
-      #   latest=false
-    steps:
-      # - name: Create temporary directory
-      #   id: tempdir
-      #   run: echo "::set-output name=path::$(mktemp -d $HOME/work/Altschool-Capstone-Project/Altschool-Capstone-Project/temp-XXXXX)"
 
+    steps:
       # https://github.com/actions/checkout
       - name: Checkout codebase
         uses: actions/checkout@v3.3.0
-        # with:
-        #   path: ${{ steps.tempdir.outputs.path }}
-
-      # - name: Check for changes in App folder
-      #   id: check_changes
-      #   run: |
-      #     # echo ${{ steps.tempdir.outputs.path }}
-      #     # ls ${{ steps.tempdir.outputs.path }}
-      #     cd ${{ steps.tempdir.outputs.path }}
-      #     CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} -- App/)
-      #     # CHANGED_FILES=$(git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }} -- App/)
-      #     # CHANGED_FILES=$(git diff --name-only HEAD~1...HEAD -- App/)
-      #     echo "CHANGED_FILES=$CHANGED_FILES"
-      #     echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
 
       # https://github.com/docker/setup-buildx-action
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
-        # if: ${{ contains(env.CHANGED_FILES, 'App') }}
 
       # https://github.com/docker/login-action
       - name: Login to DockerHub
         # Only login if not a PR, as PRs only trigger a Docker build and not a push
         if: ${{ github.event_name != 'pull_request' }}
-        # if: ${{ github.event_name != 'pull_request' && contains(env.CHANGED_FILES, 'App') }}
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -85,7 +48,6 @@ jobs:
       # Build/Push the 'demarauder/zombrary' image
       ###############################################
       - name: Build, tag, and push image to Docker hub
-        # if: ${{ contains(env.CHANGED_FILES, 'App') }}
         id: build-image
         run: |
           cd App
