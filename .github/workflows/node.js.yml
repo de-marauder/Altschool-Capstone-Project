@@ -1,6 +1,7 @@
 name: Node.js with npm
 
 on:
+  workflow_dispatch:
   push:
     branches: ["master"]
     paths:
