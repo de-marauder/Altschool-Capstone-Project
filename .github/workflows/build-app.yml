@@ -3,14 +3,16 @@ name: Node.js with npm
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
-    paths:
-      - ./App
+    branches: 
+      - main
+    # paths:
+    #   - ./App
 
   pull_request:
-    branches: ["main"]
-    paths:
-      - ./App
+    branches: 
+      - main
+    # paths:
+    #   - ./App
 
 jobs:
   build:
