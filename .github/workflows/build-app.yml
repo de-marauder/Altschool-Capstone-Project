@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Create temporary directory
         id: tempdir
-        run: echo "::set-output name=path::$(mktemp -d $HOME/temp-xxx)"
+        run: echo "::set-output name=path::$(mktemp -d $HOME/temp-XXXXX)"
 
       # https://github.com/actions/checkout
       - name: Checkout codebase
