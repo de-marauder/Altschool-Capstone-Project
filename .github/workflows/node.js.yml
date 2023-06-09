@@ -1,0 +1,44 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: nodejs with npm
+on:
+ push:
+   branches: ["master"]
+   paths:
+     - App
+     - Infrastructure
+     - assets
+
+ pull_request:
+   branches: ["master"]
+   paths:
+     - App
+     - Infrastructure
+     - assets
+
+jobs:
+   build:
+     runs-on: ${{matrix.os}}
+     strategy:
+       matrix:
+         os: [ubuntu-latest, windows-latest, macos-latest]
+         
+     steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+      - name: install npm dependencies
+        run: npm ci
+
+      - name: run node.js app
+      #run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+
+     
