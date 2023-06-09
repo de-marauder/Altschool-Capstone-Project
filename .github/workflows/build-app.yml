@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Create temporary directory
         id: tempdir
-        run: echo "::set-output name=path::$(mktemp -d $HOME/temp-XXXXX)"
+        run: echo "::set-output name=path::$(mktemp -d $HOME/work/Altschool-Capstone-Project/Altschool-Capstone-Project/temp-XXXXX)"
 
       # https://github.com/actions/checkout
       - name: Checkout codebase
