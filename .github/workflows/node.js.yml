@@ -47,6 +47,7 @@ jobs:
            username: ${{ DOCKERHUB_USERNAME }}
            password: ${{ DOCKERHUB_PASSWORD }}
         
+    steps:
       - name: Install Terraform
         uses: little-core-labs/install-terraform@v2.0.0
         with:
