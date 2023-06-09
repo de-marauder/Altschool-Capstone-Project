@@ -42,22 +42,22 @@ jobs:
       - name: Check for changes in App folder
         id: check_changes
         run: |
-          echo "::set-output name=changes::$(git diff --name-only ${{ github.event.before }}...${{ github.sha }})"
+          echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}...${{ github.sha }})" >> $GITHUB_ENV
 
       # https://github.com/actions/checkout
       - name: Checkout codebase
         uses: actions/checkout@v3.3.0
-        if: ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
+        if: ${{ contains(env.CHANGED_FILES, 'App') }}
 
       # https://github.com/docker/setup-buildx-action
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
-        if: ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
+        if: ${{ contains(env.CHANGED_FILES, 'App') }}
 
       # https://github.com/docker/login-action
       - name: Login to DockerHub
         # Only login if not a PR, as PRs only trigger a Docker build and not a push
-        if: github.event_name != 'pull_request' && ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
+        if: github.event_name != 'pull_request' && ${{ contains(env.CHANGED_FILES, 'App') }}
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -67,7 +67,7 @@ jobs:
       # Build/Push the 'demarauder/zombrary' image
       ###############################################
       - name: Build, tag, and push image to Docker hub
-        if: ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
+        if: ${{ contains(env.CHANGED_FILES, 'App') }}
         id: build-image
         run: |
           cd App
