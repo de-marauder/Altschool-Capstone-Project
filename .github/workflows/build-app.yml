@@ -57,12 +57,11 @@ jobs:
       # https://github.com/docker/login-action
       - name: Login to DockerHub
         # Only login if not a PR, as PRs only trigger a Docker build and not a push
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        if: ${{ contains(steps.check_changes.outputs.changes, 'path/to/your/app/folder') }}
 
       ###############################################
       # Build/Push the 'demarauder/zombrary' image
