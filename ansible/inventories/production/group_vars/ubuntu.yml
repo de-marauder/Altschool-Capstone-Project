@@ -1,0 +1,28 @@
+---
+ansible_become: True
+ansible_user: ubuntu
+ansible_password:
+ansible_become_password:
+# Node exporter version to install
+node_exporter_version: "1.4.0"
+# URL and Creds for loki
+lokiapi: "35.173.221.2:3100"
+
+prometheus_cert_file: "/srv/prometheus/certificate.key"
+prometheus_key_file: "/srv/prometheus/keyfile.pem"
+htaccessusr: "monitor"
+htaccesspwd: "monitor-password"
+
+timezone: "Africa/Lagos"
+certbot_site_names:  
+  - "monitoring.de-marauder.me"
+  - "grafana.monitoring.de-marauder.me"
+  - "prom.monitoring.de-marauder.me"
+  - "loki.monitoring.de-marauder.me"
+  - "node.monitoring.de-marauder.me"
+  - "docker.monitoring.de-marauder.me"
+  - "cadvisor.monitoring.de-marauder.me"
+
+certbot_package: "python3-certbot-nginx"
+certbot_plugin: "nginx"
+certbot_mail_address: chiezike16@gmail.com
