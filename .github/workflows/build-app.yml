@@ -28,7 +28,7 @@ permissions:
 jobs:
   docker-build-push:
     runs-on: ubuntu-latest
-    env:
+    # env:
       # Define tags to use for Docker images based on Git tags/branches (for docker/metadata-action)
       # For a new commit on default branch (main), use the literal tag 'latest' on Docker image.
       # For a new commit on other branches, use the branch name as the tag for Docker image.
