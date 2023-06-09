@@ -1,0 +1,39 @@
+name: Node.js with npm
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - App
+
+  pull_request:
+    branches: ["main"]
+    paths:
+      - App
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      
+      - name: build and push docker image
+        uses: mr-smithers-excellent/docker-build-push@v4
+        with:
+          context: ./App
+          image: demarauder/zombrary:v1
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        
