@@ -3,6 +3,8 @@ name: Docker Build and Push
 ####################################################################################################
 # You still need to find a way to make this run only when there is a change in the `App` directory #
 ####################################################################################################
+#  This works now ================================================================================ #
+####################################################################################################
 
 # Run this Build for all pushes to 'main' branch, or tagged releases.
 on:
@@ -31,15 +33,15 @@ jobs:
       # For a new commit on default branch (main), use the literal tag 'latest' on Docker image.
       # For a new commit on other branches, use the branch name as the tag for Docker image.
       # For a new tag, copy that tag name as the tag for Docker image.
-      IMAGE_TAGS: |
-        type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
-        type=ref,event=branch,enable=${{ !endsWith(github.ref, github.event.repository.default_branch) }}
-        type=ref,event=tag
-      # Define default tag "flavor" for docker/metadata-action per
-      # https://github.com/docker/metadata-action#flavor-input
-      # We turn off 'latest' tag by default.
-      TAGS_FLAVOR: |
-        latest=false
+      # IMAGE_TAGS: |
+      #   type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
+      #   type=ref,event=branch,enable=${{ !endsWith(github.ref, github.event.repository.default_branch) }}
+      #   type=ref,event=tag
+      # # Define default tag "flavor" for docker/metadata-action per
+      # # https://github.com/docker/metadata-action#flavor-input
+      # # We turn off 'latest' tag by default.
+      # TAGS_FLAVOR: |
+      #   latest=false
     steps:
       # - name: Create temporary directory
       #   id: tempdir
