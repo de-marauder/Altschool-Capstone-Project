@@ -4,6 +4,13 @@ provider "aws" {
 
 # Save state-file in an S3 bucket
 #
+resource "aws_instance" "ec2_instance" {
+  ami = "1234567890"
+  instance_type = "t2.medium"
+  key_name = "key-name"
+  subnet_id = aws_subnet.capstone-public-subnet1.id
+}
+
 terraform {
   backend "s3" {
     bucket         = "capstone-state-bucket"
