@@ -3,6 +3,7 @@ provider "aws" {
 }
 
 # Save state-file in an S3 bucket
+#
 terraform {
   backend "s3" {
     bucket         = "capstone-state-bucket"
