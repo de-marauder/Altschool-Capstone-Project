@@ -7,7 +7,8 @@
     name: "/srv/{{ item }}"
     state: directory
     recurse: yes
-    mode: "a+rw"
+    # mode: "a+rw"
+    mode: "0775"
   loop:
     - loki
     - loki/data
@@ -37,7 +38,8 @@
 # Loki
 - name: Deploy Loki
   docker_container:
-    image: grafana/loki:2.4.0
+    # image: grafana/loki:2.4.0
+    image: grafana/loki:latest
     restart_policy: unless-stopped
     restart: true
     name: loki-server

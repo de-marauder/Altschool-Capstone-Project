@@ -15,9 +15,9 @@ scrape_configs:
           ]
     tls_config:
       insecure_skip_verify: true
-    basic_auth:
-      username: {{ htaccessusr }}
-      password: {{ htaccesspwd }}
+#    basic_auth:
+#      username: {{ htaccessusr }}
+#      password: {{ htaccesspwd }}
 # Docker metrics server
   - job_name: 'docker_metrics'
     scheme: https
@@ -30,9 +30,9 @@ scrape_configs:
           ]
     tls_config:
       insecure_skip_verify: true
-    basic_auth:
-      username: {{ htaccessusr }}
-      password: {{ htaccesspwd }}
+#    basic_auth:
+#      username: {{ htaccessusr }}
+#      password: {{ htaccesspwd }}
 # Cadvisor
   - job_name: 'cadvisor'
     scrape_interval: 5s
@@ -45,9 +45,9 @@ scrape_configs:
           ]
     tls_config:
       insecure_skip_verify: true
-    basic_auth:
-      username: {{ htaccessusr }}
-      password: {{ htaccesspwd }}
+#    basic_auth:
+#      username: {{ htaccessusr }}
+#      password: {{ htaccesspwd }}
 # Blackbox
   - job_name: 'blackbox'
     metrics_path: /probe

@@ -7,11 +7,11 @@ positions:
 
 client:
   url: https://{{ lokiapi }}/api/prom/push
-  basic_auth:
-    username: {{ htaccessusr }}
-    password: {{ htaccesspwd }}
-  tls_config:
-    insecure_skip_verify: true
+#  basic_auth:
+#    username: {{ htaccessusr }}
+#    password: {{ htaccesspwd }}
+#  tls_config:
+#    insecure_skip_verify: true
 
 scrape_configs:
 # system logs

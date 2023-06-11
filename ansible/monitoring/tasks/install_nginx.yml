@@ -37,15 +37,19 @@
 #   - agent
 #   - server
 
-- name: Add a user to a password file and ensure permissions are set
-  community.general.htpasswd:
-    path: /srv/nginx/.htpasswd
-    name: "{{ htaccessusr }}"
-    password: '{{ htaccesspwd }}'
-    mode: a+r
-  tags:
-  - agent
-  - server
+################################################################################
+# Replace later
+################################################################################
+# - name: Add a user to a password file and ensure permissions are set
+#   community.general.htpasswd:
+#     path: /srv/nginx/.htpasswd
+#     name: "{{ htaccessusr }}"
+#     password: '{{ htaccesspwd }}'
+#     mode: a+r
+#   tags:
+#   - agent
+#   - server
+################################################################################
 
 # - name: Copy monitor server nginx config
 #   template:
