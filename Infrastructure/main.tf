@@ -222,3 +222,17 @@ resource "aws_security_group" "database_security_group" {
     description = "Allow all outbound traffic from the database instance"
   }
 }
+
+
+# Configuring a Load balancer
+resource "aws_lb" "load_balancer" {
+  name               = "load_balancer"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.capstone-load_balancer_sg.id]
+  subnets            = [aws_subnet.capstone-public-subnet1.id,aws_subnet.capstone-public-subnet2.id]
+
+  enable_deletion_protection = false
+  depends_on = [aws_instance.capstone_instance]
+
+}
