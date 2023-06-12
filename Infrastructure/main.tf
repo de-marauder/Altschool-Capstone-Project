@@ -1,5 +1,5 @@
 provider "aws" {
-  region = vars.region
+  region = var.region
 }
 
 # Save state-file in an S3 bucket
@@ -7,7 +7,7 @@ terraform {
   backend "s3" {
     bucket         = "capstone-state-bucket"
     key            = "terraform.tfstate"
-    region         = vars.region
+    region         = "eu-west-2"
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_subnet" "capstone-public-subnet1" {
   vpc_id                  = aws_vpc.capstone_vpc.id
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true
-  availability_zone       = vars.av-zone1
+  availability_zone       = var.av-zone1
   tags = {
     Name = "capstone-public-subnet1"
   }
@@ -57,7 +57,7 @@ resource "aws_subnet" "capstone-public-subnet2" {
   vpc_id                  = aws_vpc.capstone_vpc.id
   cidr_block              = "10.0.2.0/24"
   map_public_ip_on_launch = true
-  availability_zone       = vars.av-zone2
+  availability_zone       = var.av-zone2
   tags = {
     Name = "capstone-public-subnet2"
   }
@@ -67,7 +67,7 @@ resource "aws_subnet" "capstone-public-subnet2" {
 resource "aws_subnet" "capstone-private-subnet" {
   vpc_id                  = aws_vpc.capstone_vpc.id
   cidr_block              = "10.0.3.0/24"
-  availability_zone       = vars.av-zone1
+  availability_zone       = var.av-zone1
 
   tags = {
     Name = "capstone-private-Subnet"
@@ -222,3 +222,66 @@ resource "aws_security_group" "database_security_group" {
     description = "Allow all outbound traffic from the database instance"
   }
 }
+
+#get ami id
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+      name   = "name"
+      values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+      name   = "architecture"
+      values = ["x86_64"]
+  }
+
+  filter {
+      name   = "virtualization-type"
+      values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+#Create key pair
+resource "aws_key_pair" "Capstone_keypair" {
+  key_name   = "Capstone_keypair"
+  public_key = file("~/.ssh/id_rsa.pub")  # Update with the path to your public key file
+}
+
+#crate instance 
+resource "aws_instance" "capstone-1-server" {
+    ami = data.aws_ami.ubuntu.id
+    instance_type = "t2.micro"
+    subnet_id = aws_subnet.capstone-public-subnet1.id
+    availability_zone = var.av-zone1
+    security_groups = [aws_security_group.capstone-security-grp-rule.id]
+    associate_public_ip_address = true
+    tags = {
+        Name: "capstone-server-1"
+        source: "terraform"
+    }
+    key_name = aws_key_pair.Capstone_keypair.key_name
+
+
+} 
+
+#replica instance for the application
+resource "aws_instance" "capstone-2-server" {
+    ami = data.aws_ami.ubuntu.id
+    instance_type = "t2.micro"
+    subnet_id = aws_subnet.capstone-public-subnet2.id
+    availability_zone = var.av-zone2
+    security_groups = [aws_security_group.capstone-security-grp-rule.id]
+    associate_public_ip_address = true
+    tags = {
+        Name: "capstone-server-1"
+        source: "terraform"
+    }
+    key_name = aws_key_pair.Capstone_keypair.key_name
+
+
+} 
+
