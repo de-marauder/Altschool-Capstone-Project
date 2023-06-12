@@ -222,3 +222,69 @@ resource "aws_security_group" "database_security_group" {
     description = "Allow all outbound traffic from the database instance"
   }
 }
+<<<<<<< HEAD
+
+#get ami id
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+      name   = "name"
+      values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+      name   = "architecture"
+      values = ["x86_64"]
+  }
+
+  filter {
+      name   = "virtualization-type"
+      values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+#Create key pair
+resource "aws_key_pair" "Capstone_keypair" {
+  key_name   = "Capstone_keypair"
+  public_key = file("~/.ssh/id_rsa.pub")  # Update with the path to your public key file
+}
+
+#crate instance 
+resource "aws_instance" "capstone-1-server" {
+    ami = data.aws_ami.ubuntu.id
+    instance_type = "t2.micro"
+    subnet_id = aws_subnet.capstone-public-subnet1.id
+    availability_zone = var.av-zone1
+    security_groups = [aws_security_group.capstone-security-grp-rule.id]
+    associate_public_ip_address = true
+    tags = {
+        Name: "capstone-server-1"
+        source: "terraform"
+    }
+    key_name = aws_key_pair.Capstone_keypair.key_name
+
+
+} 
+
+#replica instance for the application
+resource "aws_instance" "capstone-2-server" {
+    ami = data.aws_ami.ubuntu.id
+    instance_type = "t2.micro"
+    subnet_id = aws_subnet.capstone-public-subnet2.id
+    availability_zone = var.av-zone2
+    security_groups = [aws_security_group.capstone-security-grp-rule.id]
+    associate_public_ip_address = true
+    tags = {
+        Name: "capstone-server-1"
+        source: "terraform"
+    }
+    key_name = aws_key_pair.Capstone_keypair.key_name
+
+
+} 
+
+=======
+>>>>>>> origin/infra_team
