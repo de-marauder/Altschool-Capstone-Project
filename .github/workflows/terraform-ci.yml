@@ -7,11 +7,22 @@ on:
     branches:
       - main
 
+env:
+  TF_CLOUD_ORGANIZATION: "group23"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  TF_WORKSPACE: "group23"
+  #CONFIG_DIRECTORY: "./"
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-          
+  terraform:
+    if: github.repository != 'hashicorp-education/learn-terraform-github-actions'       
+    
+  permissions:
+      contents: read
+
   terraform-setup:
     runs-on: ${{matrix.os}}
     strategy:
@@ -19,12 +30,40 @@ jobs:
         os: [ubuntu-latest]
     
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Upload Configuration
+      uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+      id: plan-upload
+      with:
+      workspace: ${{ env.TF_WORKSPACE }}
+      directory: ${{ env.CONFIG_DIRECTORY }}
+      speculative: true
+
     - name: Install Terraform
       uses: little-core-labs/install-terraform@v2.0.0
       with:
          version: 0.13.4
     - name: confirm install
       run: terraform -v
+
+    - name: Create Plan Run
+      uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+      id: plan-run
+      with:
+       workspace: ${{ env.TF_WORKSPACE }}
+        configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+        plan_only: true
+
+    name: 'Terraform Apply'
+    - name: Create Apply Run
+      uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+      id: apply-run
+      with:
+      workspace: ${{ env.TF_WORKSPACE }}
+      configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
+
     # - name: Terraform apply
     #   run: |
     #     terraform init
