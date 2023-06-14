@@ -4,8 +4,8 @@ on:
   push:
     paths:
       - Infrastructure/**
-  branches:
-    - main
+    branches:
+      - main
 
 env:
   TF_CLOUD_ORGANIZATION: "group23"
@@ -14,12 +14,12 @@ env:
   CONFIG_DIRECTORY: "./"
 
 jobs:
-   terraform:
+ terraform:
     if: github.repository != 'hashicorp-education/learn-terraform-github-actions'
     permissions:
       contents: read
 
-   terraform-setup:
+ terraform-setup:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -60,8 +60,8 @@ jobs:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
 
-    # - name: Terraform Apply
-    #   run: |
-    #     terraform init
-    #     terraform plan
-    #     terraform apply -auto-approve
+# - name: Terraform Apply
+#   run: |
+#     terraform init
+#     terraform plan
+#     terraform apply -auto-approve
