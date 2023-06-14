@@ -14,12 +14,13 @@ env:
   CONFIG_DIRECTORY: "./"
 
 jobs:
- terraform:
-    if: github.repository != 'hashicorp-education/learn-terraform-github-actions'
-    permissions:
-      contents: read
+   terraform:
+     steps: 
+       if: github.repository != 'hashicorp-education/learn-terraform-github-actions'
+       permissions:
+         contents: read
 
- terraform-setup:
+   terraform-setup:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
