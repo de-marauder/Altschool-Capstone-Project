@@ -1,4 +1,4 @@
-name: Terraform CI-CD
+#name: Terraform CI-CD
 
 on:
   push:
@@ -25,6 +25,7 @@ env:
 
 jobs:
    terraform-setup:
+    name: Terraform CI-CD
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
