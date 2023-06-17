@@ -2,13 +2,16 @@ name: Terraform CI-CD
 
 on:
   push:
-    paths:
-      - Infrastructure/**
     branches:
-      - main
-
+    - main
+    paths:
+    - Infrastructure/**
+    
+permissions:
+   contents: read
+   pull-requests: write
+    
 env:
-
 #TERRAFORM
   TF_CLOUD_ORGANIZATION: "group23"
   TF_API_TOKEN: ${{ TF_API_TOKEN }}
@@ -50,12 +53,14 @@ jobs:
       - name: Setup terraform
         uses: hashicorp/setup-terraform@v2.2.1
         with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          #cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          terraform_version: 1.1.9
+          terraform_wrapper: false
     
       - name: Install Terraform
         uses: little-core-labs/install-terraform@v2.0.0
         with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          #cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
           version: 0.13.4
 
       - name: Confirm Install
@@ -63,51 +68,79 @@ jobs:
       
 #terraform init
       - name: Terraform Init
-        uses: hashicorp/terraform-github-actions/init@v0.4.0
+        id: init
+        run: terraform init
+        #uses: hashicorp/terraform-github-actions/init@v0.4.0
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          run: terraform init -input=false
+          AWS_REGION: ${{ ENV.AWS_REGION }}
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
+        shell: bash
+          #run: terraform init -input=false
 
 #initiate terraform to run          
-      - name: Create Plan Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: plan-run
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
-          plan_only: true
+      #- name: Create Plan Run
+       # uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+       # id: plan-run
+       # with:
+        #  workspace: ${{ env.TF_WORKSPACE }}
+        #  configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+        #  plan_only: true
 
 #terraform plan         
       - name: Terraform Plan
-        uses: hashicorp/terraform-github-actions/plan@v0.14.0
+        id: plan
+        run: |
+          terraform plan -input=false -no-color -out tf.plan
+       # uses: hashicorp/terraform-github-actions/plan@v0.14.0
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
           #run: terraform plan -input=false
-        with:
-          version: 0.13.4
-          working-directory: Infrastructure
+        #with:
+          #version: 0.13.4
+        
 
 #initiate terraform to apply          
-      - name: 'Create Terraform Apply'
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: apply-run
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+   #   - name: 'Create Terraform Apply'
+   #     uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+    #    id: apply-run
+    #    with:
+     #     workspace: ${{ env.TF_WORKSPACE }}
+     #     configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+     
+#terraform show
+      - name: Terraform Show
+        id: show
+        run: terraform show -no-color tf.plan 2>&1 > /tmp/plan.txt
+        working-directory: .${{ env.TF_ACTION_WORKING_DIR }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ ENV.AWS_REGION }}
+        shell: bash
+      
 
 #terraform apply          
       - name: Terraform Apply
-        uses: hashicorp/terraform-github-actions/apply@v0.14.0
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -input=false tf.plan
+       # uses: hashicorp/terraform-github-actions/apply@v0.14.0
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ ENV.AWS_REGION }}
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
+        shell: bash
           #run: terraform apply -auto-approve -input=false 
-        with:
-          version: 0.13.4
-          working-directory: Infrastructure
-          auto_approve: true
+       #with:
+          #version: 0.13.4
+          # auto_approve: true
+          
+
+
 
 
 # - name: Terraform Apply
