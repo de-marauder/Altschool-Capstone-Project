@@ -222,7 +222,7 @@ resource "aws_security_group" "database_security_group" {
     description = "Allow all outbound traffic from the database instance"
   }
 }
-<<<<<<< HEAD
+
 
 #get ami id
 data "aws_ami" "ubuntu" {
@@ -246,45 +246,35 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-#Create key pair
+# Create key pair
 resource "aws_key_pair" "Capstone_keypair" {
   key_name   = "Capstone_keypair"
   public_key = file("~/.ssh/id_rsa.pub")  # Update with the path to your public key file
 }
 
-#crate instance 
-resource "aws_instance" "capstone-1-server" {
-    ami = data.aws_ami.ubuntu.id
-    instance_type = "t2.micro"
-    subnet_id = aws_subnet.capstone-public-subnet1.id
-    availability_zone = var.av-zone1
-    security_groups = [aws_security_group.capstone-security-grp-rule.id]
-    associate_public_ip_address = true
-    tags = {
-        Name: "capstone-server-1"
-        source: "terraform"
-    }
-    key_name = aws_key_pair.Capstone_keypair.key_name
+resource "aws_launch_configuration" "capstone-server" {
+  image_id                    = data.aws_ami.ubuntu.id
+  instance_type               = "t2.micro"
+  security_groups             = [aws_security_group.capstone-security-grp-rule.id]
+  associate_public_ip_address = true
+  key_name                    = aws_key_pair.Capstone_keypair.key_name  # Use the created key pair
+
+}
+
+resource "aws_autoscaling_group" "capstone-server" {
+  desired_capacity     = 2
+  max_size             = 2
+  min_size             = 1
+  vpc_zone_identifier  = [aws_subnet.capstone-public-subnet1.id, aws_subnet.capstone-public-subnet2.id]
+  launch_configuration = aws_launch_configuration.capstone-server.name
+
+  tag {
+    key                 = "Name"
+    value               = "capstone-server"
+    propagate_at_launch = true
+  }
+}
 
 
-} 
-
-#replica instance for the application
-resource "aws_instance" "capstone-2-server" {
-    ami = data.aws_ami.ubuntu.id
-    instance_type = "t2.micro"
-    subnet_id = aws_subnet.capstone-public-subnet2.id
-    availability_zone = var.av-zone2
-    security_groups = [aws_security_group.capstone-security-grp-rule.id]
-    associate_public_ip_address = true
-    tags = {
-        Name: "capstone-server-1"
-        source: "terraform"
-    }
-    key_name = aws_key_pair.Capstone_keypair.key_name
 
 
-} 
-
-=======
->>>>>>> origin/infra_team
