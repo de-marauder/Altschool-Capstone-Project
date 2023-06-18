@@ -230,7 +230,7 @@ resource "aws_security_group" "database_security_group" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    security_groups = [aws_security_group.bastion_security_group]
+    security_groups = [aws_security_group.bastion_security_group.id]
   }
 
 
@@ -315,6 +315,21 @@ resource "aws_instance" "bastion_host" {
 
   tags = {
     Name = "bastion-host"
+  }
+}
+
+# create database instance
+
+resource "aws_instance" "database_server" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.Capstone_keypair.key_name 
+
+  vpc_security_group_ids = [aws_security_group.database_security_group.id]
+  subnet_id              = aws_subnet.capstone-private-subnet.id
+
+  tags = {
+    Name = "database-server"
   }
 }
 
