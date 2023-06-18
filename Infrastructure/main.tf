@@ -20,26 +20,6 @@ resource "aws_vpc" "capstone_vpc" {
   }
 }
 
-# Create an internet gateway
-resource "aws_internet_gateway" "capstone_igw" {
-  vpc_id = aws_vpc.capstone_vpc.id
-
-  tags = {
-    Name = "capstoneInternetGateway"
-  }
-}
-
-# Create Public Route Table
-resource "aws_route_table" "capstone-route-table-public" {
-  vpc_id = aws_vpc.capstone_vpc.id
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.capstone_igw.id
-  }
-  tags = {
-    Name = "capstone-route-table-public"
-  }
-}
 
 # Create Public Subnet-1
 resource "aws_subnet" "capstone-public-subnet1" {
@@ -62,6 +42,29 @@ resource "aws_subnet" "capstone-public-subnet2" {
     Name = "capstone-public-subnet2"
   }
 }
+
+# Create an internet gateway
+resource "aws_internet_gateway" "capstone_igw" {
+  vpc_id = aws_vpc.capstone_vpc.id
+
+  tags = {
+    Name = "capstoneInternetGateway"
+  }
+}
+
+# Create Public Route Table
+resource "aws_route_table" "capstone-route-table-public" {
+  vpc_id = aws_vpc.capstone_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.capstone_igw.id
+  }
+  tags = {
+    Name = "capstone-route-table-public"
+  }
+}
+
+
 
 # Create a private subnet
 resource "aws_subnet" "capstone-private-subnet" {
@@ -249,7 +252,7 @@ data "aws_ami" "ubuntu" {
 # Create key pair
 resource "aws_key_pair" "Capstone_keypair" {
   key_name   = "Capstone_keypair"
-  public_key = file("~/.ssh/id_rsa.pub")  # Update with the path to your public key file
+  public_key = file("~/.ssh/id_rsa.pub")  
 }
 
 resource "aws_launch_configuration" "capstone-server" {
@@ -272,6 +275,21 @@ resource "aws_autoscaling_group" "capstone-server" {
     key                 = "Name"
     value               = "capstone-server"
     propagate_at_launch = true
+  }
+}
+
+# create bastion host
+
+resource "aws_instance" "bastion_host" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.Capstone_keypair.key_name 
+
+  vpc_security_group_ids = [aws_security_group.bastion_security_group.id]
+  subnet_id              = aws_subnet.capstone-public-subnet1.id
+
+  tags = {
+    Name = "bastion-host"
   }
 }
 
