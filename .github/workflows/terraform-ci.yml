@@ -1,4 +1,4 @@
-name: Terraform CI-CD
+name: "Terraform CI-CD"
 
 on:
   push:
@@ -7,26 +7,100 @@ on:
     branches:
       - main
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+env:
+  TF_CLOUD_ORGANIZATION: "group23"
+  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+  TF_WORKSPACE: "group23"
+ # CONFIG_DIRECTORY: ""
+  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TF_ACTION_WORKING_DIR: 'Infrastructure'
+  SOURCE_DIR: './src'
+  AWS_REGION: 'us-east-1'
+  AWS_S3_BUCKET: '[capstone-state-bucket]'
+
 
 jobs:
-          
-  terraform-setup:
-    runs-on: ${{matrix.os}}
+   #terraform:
+    # steps: 
+      # if: github.repository != 'hashicorp-education/learn-terraform-github-actions'
+      # permissions:
+       #  contents: read
+
+   terraform-setup:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest]
     
     steps:
-    - name: Install Terraform
-      uses: little-core-labs/install-terraform@v2.0.0
-      with:
-         version: 0.13.4
-    - name: confirm install
-      run: terraform -v
-    # - name: Terraform apply
-    #   run: |
-    #     terraform init
-    #     terraform plan
-    #     terraform apply -auto-approve
+      - name: Checkout
+        uses: actions/checkout@v3
+    
+      - name: Install Terraform
+        uses: little-core-labs/install-terraform@v2.0.0
+       # run: |
+      #  wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+       # echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+        #sudo apt update && sudo apt install terraform
+
+        with:
+          version: 0.13.4
+
+      - name: Confirm Install
+        run: terraform -v
+
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        id: plan-upload
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ env.TF_ACTION_WORKING_DIR }}
+          speculative: true
+
+#terraform init
+      - name: Terraform Init
+        uses: hashicorp/terraform-github-actions/init@v0.4.0
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          run: terraform init -input=false
+
+      - name: Create Plan Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        id: plan-run
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+          plan_only: true
+
+ #terraform plan         
+      - name: Terraform Plan
+        uses: 
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          run: terraform plan -input=false
+
+      - name: 'Terraform Apply'
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        id: apply-run
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+
+      - name: Terraform Apply
+        uses:
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          run: terraform apply -auto-approve -input=false 
+
+#      - name: Sync S3
+ #       uses: jakejarvis/s3-sync-action@master
+# - name: Terraform Apply
+#   run: |
+#     terraform init
+#     terraform plan
+#     terraform apply -auto-approve
