@@ -256,7 +256,7 @@ resource "aws_security_group" "database_security_group" {
 resource "aws_security_group" "monitoring_security_group" {
   name        = "monitoring-security-group"
   description = "Security group for monitoring server"
-  vpc_id      = aws_vpc.capstone-vpc.id
+  vpc_id      = aws_vpc.capstone_vpc.id
 
   ingress {
     from_port   = 22
