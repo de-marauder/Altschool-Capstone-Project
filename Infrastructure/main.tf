@@ -251,6 +251,29 @@ resource "aws_security_group" "database_security_group" {
   }
 }
 
+# Create a security group for the monitoring server
+
+resource "aws_security_group" "monitoring_security_group" {
+  name        = "monitoring-security-group"
+  description = "Security group for monitoring server"
+  vpc_id      = aws_vpc.capstone-vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
 
 #get ami id
 data "aws_ami" "ubuntu" {
@@ -332,6 +355,22 @@ resource "aws_instance" "database_server" {
     Name = "database-server"
   }
 }
+
+# create monitoring server
+
+resource "aws_instance" "monitoring_server" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.Capstone_keypair.key_name
+
+  vpc_security_group_ids = [aws_security_group.monitoring_security_group.id]
+  subnet_id              = aws_subnet.capstone-public-subnet1.id
+
+  tags = {
+    Name = "monitoring-server"
+  }
+}
+
 
 
 
