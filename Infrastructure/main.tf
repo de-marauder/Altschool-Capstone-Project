@@ -360,7 +360,7 @@ resource "aws_instance" "database_server" {
 
 resource "aws_instance" "monitoring_server" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
   key_name      = aws_key_pair.Capstone_keypair.key_name
 
   vpc_security_group_ids = [aws_security_group.monitoring_security_group.id]
