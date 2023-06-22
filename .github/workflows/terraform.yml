@@ -1,4 +1,4 @@
-name: Terraform CI-CD, Build Docker Image and Push
+name: Terraform CI-CD, Build Docker Image and Push#
 
 on:
   push:
