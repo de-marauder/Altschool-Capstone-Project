@@ -1,13 +1,13 @@
 #name: Terraform CI-CD, Build Docker Image and Push#
 
-on:
+#on:
   push:
     branches:
       - main
     paths:
       - Infrastructure/**
       
-permissions:
+#permissions:
   contents: read
   pull-requests: write
 
@@ -32,7 +32,7 @@ env:
 #             TERRAFORM                     #
 #                                           #
 #############################################
-jobs:
+#jobs:
   terraform-setup:
     name: Terraform CI-CD
     runs-on: ${{ matrix.os }}
