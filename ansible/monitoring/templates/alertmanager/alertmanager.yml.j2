@@ -1,0 +1,23 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'severity']
+
+  receiver: 'email-and-slack'
+
+receivers:
+- name: 'email-and-slack'
+  email_configs:
+  - to: 'chiezike16@gmail.com'
+    from: '{{smtp_username}}@gmail.com'
+    smarthost: 'smtp.gmail.com:587'
+    auth_username: '{{smtp_username}}'
+    auth_password: '{{smtp_password}}'
+    auth_identity: '{{smtp_username}}@gmail.com'
+    send_resolved: true
+
+  slack_configs:
+  - api_url: 'https://hooks.slack.com/services/your-webhook-url'
+    channel: '#alerts'
+    send_resolved: true

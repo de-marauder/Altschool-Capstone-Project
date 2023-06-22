@@ -1,0 +1,60 @@
+---
+- name: Create folders
+  file:
+    state: directory
+    name: "/srv/{{ item }}"
+    recurse: yes
+    mode: "a+rw"
+  loop:
+    - nginx
+    - nginx/logs
+  tags:
+    - db
+
+- name: Copy the db nginx configuration
+  template:
+    src: nginx/db_nginx.conf
+    dest: /srv/nginx/nginx.conf
+  tags:
+    - db
+
+# Reverse proxy
+- name: Deploy nginx
+  docker_container:
+    image: nginx:1.23.1-alpine
+    name: nginx
+    restart_policy: always
+    restart: yes
+    recreate: yes
+    networks:
+      # - name: monitoring
+      - name: db
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "9100:9100"
+      # - "9323:9323"
+      # - "9324:9324"
+    mounts: type=bind
+      source=/srv/nginx
+      target=/etc/nginx
+  tags:
+    - db
+
+- name: Grant SSL certs inside nginx Docker container for dbs
+  shell: |
+    docker exec -i nginx sh -c '
+    apk update
+    apk add certbot-nginx
+    certbot --{{ certbot_plugin }} -d  {{ certbot_db_site_names[0] }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
+    '
+  run_once: true
+  tags: db
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    docker_command: "docker exec -i nginx sh"
+
+  # register: command_output
+# - name: Display command output
+#   debug:
+#     var: command_output.stdout_lines

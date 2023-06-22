@@ -1,0 +1,20 @@
+---
+- name: Install ssmtp requirements
+  apt:
+    state: present
+    update_cache: yes
+    name: "{{item}}"
+    loop: 
+      - ssmtp
+      - mutt
+- name: Render template
+  set_fact:
+    rendered_content: "{{ lookup('template', 'ssmtp/ssmtp.conf') }}"
+
+- name: Update ssmtp config
+  blockinfile:
+    path: /etc/ssmtp/ssmtp.conf
+    marker: "# ANSIBLE MANAGED BLOCK"
+    block: "{{ rendered_content }}"
+  backup: yes
+

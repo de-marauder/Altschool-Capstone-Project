@@ -3,32 +3,40 @@
   community.general.timezone:
     name: "{{timezone}}"
   tags:
-  - agent
-  - server
+    - agent
+    - server
 - name: Install required packages
   import_tasks: install_requirements.yml
   become: True
   tags:
-  - agent
-  - server
+    - agent
+    - server
 - name: Create a docker network
   docker_network:
-    name: monitoring
+    name: "{{item}}"
+  loop:
+    - monitoring
+    - app
+    - db
   tags:
-  - agent
-  - server
+    - agent
+    - server
+- name: Setup server for sending mails
+  import_tasks: setup_ssmtp_server.yml
+  tags:
+    - server
 - name: Install_containers
   import_tasks: install_containers.yml
   tags:
-  - server
+    - server
 # Install monitoring agents
 - name: Install monitoring agents
   import_tasks: install_agents.yml
   tags:
-  - agent
-  - server
-- name: Install nginx reverse proxy
-  import_tasks: install_nginx.yml
+    - agent
+    - server
+# - name: Install nginx reverse proxy
+#   import_tasks: install_nginx.yml
 # Setup SSL with LetsEncrypt
 # - name: setup SSL with certbot
 #   import_tasks: setup_ssl.yml

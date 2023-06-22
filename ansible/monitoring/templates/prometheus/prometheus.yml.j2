@@ -1,8 +1,24 @@
 global:
   scrape_interval:     10s
-  external_labels:
-    monitor: 'inf.ah34.net'
+  evaluation_interval: 10s
+
 scrape_configs:
+# Prometheus
+  - job_name: prometheus
+    scheme: https
+    scrape_interval: 5s
+    static_configs:
+      - targets: [
+      'prom.monitoring.de-marauder.me'
+          ]
+# grafana
+  - job_name: grafana
+    scheme: https
+    scrape_interval: 5s
+    static_configs:
+      - targets: [
+      'grafana.monitoring.de-marauder.me'
+          ]
 # Node exporter
   - job_name: 'node_exporter'
     scheme: https
@@ -54,8 +70,12 @@ scrape_configs:
     params:
       module: [http_2xx]
     static_configs:
-      - targets:
-        - http://<website>
+      - targets: [
+        'prom.monitoring.de-marauder.me',
+        'grafana.monitoring.de-marauder.me',
+        'app.de-marauder.me'
+        'db.de-marauder.me'
+        ]
     relabel_configs:
     - source_labels: [__address__]
       target_label: __param_target
@@ -63,22 +83,3 @@ scrape_configs:
       target_label: instance
     - target_label: __address__
       replacement: blackbox:9115  # The blackbox exporter's real hostname:port.
-# SNMP
-#  - job_name: 'snmp'
-#    static_configs:
-#    - targets: ['<device>']
-#      labels:
-#        job: '<device name>'
-#    - targets: ['<device>']
-#      labels:
-#        job: '<device name>'
-#    metrics_path: /snmp
-#    params:
-#      module: [mikrotik]
-#    relabel_configs:
-#      - source_labels: [__address__]
-#        target_label: __param_target
-#      - source_labels: [__param_target]
-#        target_label: instance
-#      - target_label: __address__
-#        replacement: snmpexporter:9116  # The SNMP exporter's real hostname:port.

@@ -8,7 +8,7 @@
     state: directory
     recurse: yes
     # mode: "a+rw"
-    mode: "0775"
+    mode: "0777"
   loop:
     - loki
     - loki/data
@@ -16,6 +16,7 @@
     - prometheus/data
     - grafana
     - blackbox
+    - alertmanager
     # - snmp_exporter
 - name: Deploy container config files
   copy:
@@ -87,6 +88,7 @@
 - name: Deploy Prometheus
   docker_container:
     name: prometheus
+    image: prom/prometheus:latest
     restart_policy: unless-stopped
     restart: true
     timeout: 120
@@ -98,7 +100,6 @@
     - type=bind
       target=/prometheus
       source=/srv/prometheus/data
-    image: prom/prometheus
     command: "--config.file=/etc/prometheus/prometheus.yml"
     networks:
       name=monitoring

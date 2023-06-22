@@ -1,0 +1,31 @@
+---
+- name: Set timezone
+  community.general.timezone:
+    name: "{{timezone}}"
+  tags:
+    - app
+
+- name: Install required packages
+  import_tasks: install_requirements.yml
+  become: True
+  tags:
+    - app
+
+- name: Create a docker network
+  docker_network:
+    name: "{{item}}"
+  loop:
+    - app
+  tags:
+    - app
+
+# Install monitoring apps
+- name: Install app
+  import_tasks: install_apps.yml
+  tags:
+    - app
+    
+# - name: Install nginx reverse proxy
+#   import_tasks: install_nginx.yml
+
+

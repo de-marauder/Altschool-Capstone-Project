@@ -1,0 +1,32 @@
+---
+- name: Set timezone
+  community.general.timezone:
+    name: "{{timezone}}"
+  tags:
+    - db
+
+- name: Install required packages
+  import_tasks: install_requirements.yml
+  become: True
+  tags:
+    - db
+
+- name: Create a docker network
+  docker_network:
+    name: "{{item}}"
+  loop:
+    - db
+  tags:
+    - db
+
+# Install mongo db
+- name: Install db
+  import_tasks: install_db.yml
+  tags:
+    - db
+
+# - name: Install nginx reverse proxy
+#   import_tasks: install_nginx.yml
+#   tags: db
+
+

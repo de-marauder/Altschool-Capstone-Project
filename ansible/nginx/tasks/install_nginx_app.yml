@@ -1,0 +1,64 @@
+---
+################################################################################
+# Replace later
+################################################################################
+# - name: Add a user to a password file and ensure permissions are set
+#   community.general.htpasswd:
+#     path: /srv/nginx/.htpasswd
+#     name: "{{ htaccessusr }}"
+#     password: '{{ htaccesspwd }}'
+#     mode: a+r
+#   tags:
+#   - app
+#   - server
+################################################################################
+
+- name: Copy the app nginx configuration
+  template:
+    src: nginx/app_nginx.conf
+    dest: /srv/nginx/nginx.conf
+  tags:
+    - app
+
+# Reverse proxy
+- name: Deploy nginx on application server
+  docker_container:
+    image: nginx:1.23.1-alpine
+    name: nginx
+    restart_policy: always
+    restart: yes
+    recreate: yes
+    networks:
+      - name: monitoring
+      - name: app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "9100:9100"
+      - "9323:9323"
+      - "9324:9324"
+    mounts: type=bind
+      source=/srv/nginx
+      target=/etc/nginx
+  tags:
+    - app
+
+- name: Grant SSL certs inside nginx Docker container for apps
+  shell: |
+    docker exec -i nginx sh -c '
+    apk update
+    apk add certbot-nginx
+    certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
+    '
+  run_once: true
+  loop: "{{ certbot_app_site_names }}"
+  tags:
+    - app
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    docker_command: "docker exec -i nginx sh"
+
+  # register: command_output
+# - name: Display command output
+#   debug:
+#     var: command_output.stdout_lines
