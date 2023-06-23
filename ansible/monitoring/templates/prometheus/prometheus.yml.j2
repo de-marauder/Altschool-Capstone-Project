@@ -11,6 +11,14 @@ scrape_configs:
       - targets: [
       'prom.monitoring.de-marauder.me'
           ]
+# alertmanager
+  - job_name: alertmanager
+    scheme: https
+    scrape_interval: 5s
+    static_configs:
+      - targets: [
+      'alert.monitoring.de-marauder.me'
+          ]
 # grafana
   - job_name: grafana
     scheme: https
@@ -73,6 +81,7 @@ scrape_configs:
       - targets: [
         'prom.monitoring.de-marauder.me',
         'grafana.monitoring.de-marauder.me',
+        'alert.monitoring.de-marauder.me',
         'app.de-marauder.me',
         'db.de-marauder.me'
         ]
