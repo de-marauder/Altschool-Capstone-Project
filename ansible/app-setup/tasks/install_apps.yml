@@ -26,6 +26,5 @@
     ports:
       - "5000:5000"
     env:
-      # DATABASE_URL: mongodb+srv/://de-marauder:qhv9qaHFbsF1Bkjp@zombrary.8rod4.mongodb.net/?retryWrites=true&w=majority
       DATABASE_URL: mongodb://{{db_user}}:{{db_password}}@db.de-marauder.me
     networks: name=app
