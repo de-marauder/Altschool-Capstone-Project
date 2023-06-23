@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-west-2"
+  region = var.region
 }
 
 # Save state-file in an S3 bucket
@@ -17,6 +17,29 @@ resource "aws_vpc" "capstone_vpc" {
 
   tags = {
     Name = "capstoneVPC"
+  }
+}
+
+
+# Create Public Subnet-1
+resource "aws_subnet" "capstone-public-subnet1" {
+  vpc_id                  = aws_vpc.capstone_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = var.av-zone1
+  tags = {
+    Name = "capstone-public-subnet1"
+  }
+}
+
+# Create Public Subnet-2
+resource "aws_subnet" "capstone-public-subnet2" {
+  vpc_id                  = aws_vpc.capstone_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = var.av-zone2
+  tags = {
+    Name = "capstone-public-subnet2"
   }
 }
 
@@ -41,33 +64,13 @@ resource "aws_route_table" "capstone-route-table-public" {
   }
 }
 
-# Create Public Subnet-1
-resource "aws_subnet" "capstone-public-subnet1" {
-  vpc_id                  = aws_vpc.capstone_vpc.id
-  cidr_block              = "10.0.1.0/24"
-  map_public_ip_on_launch = true
-  availability_zone       = "eu-west-2a"
-  tags = {
-    Name = "capstone-public-subnet1"
-  }
-}
 
-# Create Public Subnet-2
-resource "aws_subnet" "capstone-public-subnet2" {
-  vpc_id                  = aws_vpc.capstone_vpc.id
-  cidr_block              = "10.0.2.0/24"
-  map_public_ip_on_launch = true
-  availability_zone       = "eu-west-2b"
-  tags = {
-    Name = "capstone-public-subnet2"
-  }
-}
 
 # Create a private subnet
 resource "aws_subnet" "capstone-private-subnet" {
   vpc_id                  = aws_vpc.capstone_vpc.id
   cidr_block              = "10.0.3.0/24"
-  availability_zone       = "eu-west-2a"
+  availability_zone       = var.av-zone1
 
   tags = {
     Name = "capstone-private-Subnet"
@@ -149,8 +152,8 @@ resource "aws_security_group" "capstone-security-grp-rule" {
   }
   ingress {
     description = "SSH"
-    from_port   = 2200
-    to_port     = 2200
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -197,14 +200,39 @@ resource "aws_security_group" "database_security_group" {
   description = "Security group for the database instance in a private subnet"
 
   vpc_id = aws_vpc.capstone_vpc.id
+  
+  ingress {
+    description = "SSH from Application Server"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    security_groups = [aws_security_group.capstone-security-grp-rule.id]
+  }
 
   ingress {
-    from_port   = 2200
-    to_port     = 2200
+    description = "HTTPS from Application Server"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    security_groups = [aws_security_group.capstone-security-grp-rule.id]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     security_groups = [aws_security_group.bastion_security_group.id]
     description = "Allow SSH access from the bastion host"
   }
+
+  ingress {
+    description = "HTTPS from Bastion Server"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    security_groups = [aws_security_group.bastion_security_group.id]
+  }
+
 
   ingress {
     from_port   = 27017
@@ -222,3 +250,128 @@ resource "aws_security_group" "database_security_group" {
     description = "Allow all outbound traffic from the database instance"
   }
 }
+
+# Create a security group for the monitoring server
+
+resource "aws_security_group" "monitoring_security_group" {
+  name        = "monitoring-security-group"
+  description = "Security group for monitoring server"
+  vpc_id      = aws_vpc.capstone_vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+
+#get ami id
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+      name   = "name"
+      values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+      name   = "architecture"
+      values = ["x86_64"]
+  }
+
+  filter {
+      name   = "virtualization-type"
+      values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+# Create key pair
+resource "aws_key_pair" "Capstone_keypair" {
+  key_name   = "Capstone_keypair"
+  public_key = file("~/.ssh/id_rsa.pub")  
+}
+
+resource "aws_launch_configuration" "capstone-server" {
+  image_id                    = data.aws_ami.ubuntu.id
+  instance_type               = "t2.micro"
+  security_groups             = [aws_security_group.capstone-security-grp-rule.id]
+  associate_public_ip_address = true
+  key_name                    = aws_key_pair.Capstone_keypair.key_name  # Use the created key pair
+
+}
+
+resource "aws_autoscaling_group" "capstone-server" {
+  desired_capacity     = 2
+  max_size             = 2
+  min_size             = 1
+  vpc_zone_identifier  = [aws_subnet.capstone-public-subnet1.id, aws_subnet.capstone-public-subnet2.id]
+  launch_configuration = aws_launch_configuration.capstone-server.name
+
+  tag {
+    key                 = "Name"
+    value               = "capstone-server"
+    propagate_at_launch = true
+  }
+}
+
+# create bastion host
+
+resource "aws_instance" "bastion_host" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.Capstone_keypair.key_name 
+
+  vpc_security_group_ids = [aws_security_group.bastion_security_group.id]
+  subnet_id              = aws_subnet.capstone-public-subnet1.id
+
+  tags = {
+    Name = "bastion-host"
+  }
+}
+
+# create database instance
+
+resource "aws_instance" "database_server" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.Capstone_keypair.key_name 
+
+  vpc_security_group_ids = [aws_security_group.database_security_group.id]
+  subnet_id              = aws_subnet.capstone-private-subnet.id
+
+  tags = {
+    Name = "database-server"
+  }
+}
+
+# create monitoring server
+
+resource "aws_instance" "monitoring_server" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.medium"
+  key_name      = aws_key_pair.Capstone_keypair.key_name
+
+  vpc_security_group_ids = [aws_security_group.monitoring_security_group.id]
+  subnet_id              = aws_subnet.capstone-public-subnet1.id
+
+  tags = {
+    Name = "monitoring-server"
+  }
+}
+
+
+
+
+

@@ -46,4 +46,4 @@ db_password: root
 
 smtp_username: chiezike16
 smtp_password: jmcxjnoteyvppwcs
-slack_webhook: https://hooks.slack.com/services/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
+slack_webhook: https://hooks.slack.com/services/SLACK_WEBHOOK
