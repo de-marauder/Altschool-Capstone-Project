@@ -1,0 +1,61 @@
+---
+- name: make config directories
+  file:
+    name: "/srv/{{ item }}"
+    state: directory
+    recurse: yes
+    mode: "0777"
+  loop:
+    - alertmanager
+    - alertmanager/data
+  tags:
+    - monitor
+
+- name: Configure Alertmanager
+  template:
+    src: alertmanager/alertmanager.yml.j2
+    dest: /srv/alertmanager/alertmanager.yml
+  tags:
+    - monitor
+
+
+# - name: Create Alertmanager service file
+#   template:
+#     src: alertmanager.service.j2
+#     dest: /etc/alertmanager/system/alertmanager.service
+
+- name: Install Alertmanager
+  docker_container:
+    name: alertmanager
+    image: quay.io/prometheus/alertmanager
+    restart_policy: unless-stopped
+    restart: true
+    timeout: 120
+    recreate: true
+    mounts:
+    - type=bind
+      target=/etc/alertmanager/alertmanager.yml
+      source=/srv/alertmanager/alertmanager.yml
+    - type=bind
+      target=/alertmanager
+      source=/srv/alertmanager/data
+    command: "--config.file=/etc/alertmanager/alertmanager.yml"
+    networks:
+      name=monitoring
+  tags:
+    - monitor
+
+
+# - name: Start Alertmanager service
+#   systemd:
+#     name: alertmanager
+#     state: started
+#     enabled: yes
+
+# - name: Restart and enable the alertmanager service
+#   service:
+#     name: alertmanager
+#     daemon_reload: yes
+#     state: restarted
+#     enabled: yes
+    

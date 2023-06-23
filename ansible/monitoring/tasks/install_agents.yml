@@ -23,8 +23,8 @@
     path: "{{ item }}"
     state: absent
   loop:
-  - "node_exporter-{{node_exporter_version}}.linux-{{ 'armv7' if ansible_architecture == 'aarch64' else 'amd64' }}/node_exporter"
-  - "node_exporter-{{node_exporter_version}}.linux-{{'armv7' if ansible_architecture == 'aarch64' else 'amd64'}}/node_exporter"
+    - "node_exporter-{{node_exporter_version}}.linux-{{ 'armv7' if ansible_architecture == 'aarch64' else 'amd64' }}/node_exporter"
+    - "node_exporter-{{node_exporter_version}}.linux-{{'armv7' if ansible_architecture == 'aarch64' else 'amd64'}}/node_exporter"
 - name: Copy node_exporter.service file
   copy:
     src: node_exporter/node_exporter.service
@@ -37,7 +37,8 @@
     enabled: yes
 - name: Download and unzip promtail
   ansible.builtin.unarchive:
-    src: "https://github.com/grafana/loki/releases/download/v2.6.1/promtail-linux-{{'arm64' if ansible_architecture == 'aarch64' else 'amd64'}}.zip"
+    # src: "https://github.com/grafana/loki/releases/download/v2.6.1/promtail-linux-{{'arm64' if ansible_architecture == 'aarch64' else 'amd64'}}.zip"
+    src: "https://github.com/grafana/loki/releases/download/v2.8.2/promtail-linux-{{'arm64' if ansible_architecture == 'aarch64' else 'amd64'}}.zip"
     dest: /var/tmp/
     remote_src: yes
 - name: Copy files to the install locations
@@ -50,27 +51,27 @@
 # Set file access control list
 - name: Change Log file permissions
   command:
-    cmd:  "setfacl -R -m u:monitoring:rwX {{ item }}"
+    cmd: "setfacl -R -m u:monitoring:rwX {{ item }}"
   loop:
-  - "/var/log"
-  - "/var/lib/docker/containers"
-  - "/tmp"
+    - "/var/log"
+    - "/var/lib/docker/containers"
+    - "/tmp"
   become: true
 - name: Copy promtail config file
   template:
-    src: 'promtail/config-promtail.yml.j2'
+    src: "promtail/config-promtail.yml.j2"
     dest: /usr/local/bin/config-promtail.yml
 - name: Cleaning up the home directory source
   file:
     path: "{{ item }}"
     state: absent
   loop:
-  - "promtail-linux-{{'arm64' if ansible_architecture == 'aarch64' else 'amd64'}}.zip"
-  - "promtail-linux-{{'arm64' if ansible_architecture == 'aarch64' else 'amd64'}}"
+    - "promtail-linux-{{'arm64' if ansible_architecture == 'aarch64' else 'amd64'}}.zip"
+    - "promtail-linux-{{'arm64' if ansible_architecture == 'aarch64' else 'amd64'}}"
 - name: Copy systemd init file
   template:
     src: promtail/promtail.service.j2
-    dest:  /etc/systemd/system/promtail.service
+    dest: /etc/systemd/system/promtail.service
 - name: Restart and enable the promtail service
   service:
     name: promtail
@@ -83,7 +84,7 @@
     dest: /etc/docker/daemon.json
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 - name: Restart docker
   systemd:
     name: docker
@@ -97,10 +98,9 @@
     image: "gcr.io/cadvisor/cadvisor:latest"
     name: "cadvisor"
     volumes:
-    - /:/rootfs:ro
-    - /var/run:/var/run:rw
-    - /sys:/sys:ro
-    - /var/lib/docker/:/var/lib/docker:ro
-    networks:
-      name=monitoring
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks: name=monitoring
   when: ansible_architecture != "aarch64"

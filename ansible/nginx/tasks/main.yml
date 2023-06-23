@@ -1,0 +1,16 @@
+---
+# Install nginx
+- name: Install nginx reverse proxy
+  import_tasks: install_nginx.yml
+- name: Install nginx reverse proxy on monitor server
+  import_tasks: install_nginx_monitor.yml
+  tags: 
+    - monitor
+- name: Install nginx reverse proxy on app servers
+  import_tasks: install_nginx_app.yml
+  tags:
+    - app
+- name: Install nginx reverse proxy on db servers
+  import_tasks: install_nginx_db.yml
+  tags:
+    - db

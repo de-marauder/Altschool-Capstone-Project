@@ -1,0 +1,13 @@
+---
+- name: Create folders
+  file:
+    state: directory
+    name: "/srv/{{ item }}"
+    recurse: yes
+    mode: "a+rw"
+  loop:
+    - nginx
+    - nginx/logs
+  tags:
+    - agent
+    - monitor

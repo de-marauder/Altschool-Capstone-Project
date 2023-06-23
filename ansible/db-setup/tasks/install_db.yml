@@ -1,0 +1,60 @@
+---
+# Deploy application
+- name: Deploy docker daemon config
+  template:
+    src: docker/daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Restart docker
+  systemd:
+    name: docker
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
+- name: make config directories
+  file:
+    name: "/srv/{{ item }}"
+    state: directory
+    recurse: yes
+    # mode: "a+rw"
+    mode: "0777"
+  loop:
+    - mongo
+    - mongo/data
+    - mongo/volume
+    # - snmp_exporter
+
+- name: Create a docker network
+  docker_network:
+    name: "{{item}}"
+  loop:
+    # - monitoring
+    - db
+  tags:
+    - db
+
+# Start application container
+- name: Start db
+  docker_container:
+    image: "mongo:latest"
+    name: "mongo"
+    recreate: yes
+    restart: yes
+    restart_policy: always
+    ports:
+      - "27017:27017"
+    mounts:
+      - type=bind
+        source=/srv/mongo/data
+        target=/data/db
+      - type=volume
+        source=zombrary-db
+        target=/data
+    env:
+      MONGO_INITDB_ROOT_USERNAME: "{{db_user}}"
+      MONGO_INITDB_ROOT_PASSWORD: "{{db_password}}"
+    networks: name=db

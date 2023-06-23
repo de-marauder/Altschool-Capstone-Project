@@ -7,7 +7,8 @@
     name: "/srv/{{ item }}"
     state: directory
     recurse: yes
-    mode: "a+rw"
+    # mode: "a+rw"
+    mode: "0777"
   loop:
     - loki
     - loki/data
@@ -15,7 +16,7 @@
     - prometheus/data
     - grafana
     - blackbox
-    # - snmp_exporter
+
 - name: Deploy container config files
   copy:
     src: "{{ item }}"
@@ -31,13 +32,21 @@
   - prometheus/web-config.yml
   # - snmp_exporter/snmp.yml
 
+- name: Deploy prometheus alert files
+  copy:
+    src: "{{ item }}"
+    dest: "/srv/{{ item }}"
+  loop:
+  - prometheus/alert.rules.yml
+
 ##############
 # Containers #
 ##############
 # Loki
 - name: Deploy Loki
   docker_container:
-    image: grafana/loki:2.4.0
+    # image: grafana/loki:2.4.0
+    image: grafana/loki:latest
     restart_policy: unless-stopped
     restart: true
     name: loki-server
@@ -85,6 +94,7 @@
 - name: Deploy Prometheus
   docker_container:
     name: prometheus
+    image: prom/prometheus:latest
     restart_policy: unless-stopped
     restart: true
     timeout: 120
@@ -96,7 +106,6 @@
     - type=bind
       target=/prometheus
       source=/srv/prometheus/data
-    image: prom/prometheus
     command: "--config.file=/etc/prometheus/prometheus.yml"
     networks:
       name=monitoring

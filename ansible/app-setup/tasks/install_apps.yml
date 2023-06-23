@@ -1,0 +1,30 @@
+---
+# Deploy application
+- name: Deploy docker daemon config
+  template:
+    src: docker/daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Restart docker
+  systemd:
+    name: docker
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
+# Start application container
+- name: Start app
+  docker_container:
+    image: "demarauder/zombrary:latest"
+    name: "zombrary"
+    recreate: yes
+    restart: yes
+    restart_policy: always
+    ports:
+      - "5000:5000"
+    env:
+      DATABASE_URL: mongodb://{{db_user}}:{{db_password}}@db.de-marauder.me
+    networks: name=app

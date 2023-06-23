@@ -1,4 +1,7 @@
 ---
 - hosts: [ubuntu]
   roles:
+  - '../db-setup'
+  - '../app-setup'
   - '../monitoring'
+  - '../nginx'
