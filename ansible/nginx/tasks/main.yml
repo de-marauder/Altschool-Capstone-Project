@@ -5,7 +5,7 @@
 - name: Install nginx reverse proxy on monitor server
   import_tasks: install_nginx_monitor.yml
   tags: 
-    - server
+    - monitor
 - name: Install nginx reverse proxy on app servers
   import_tasks: install_nginx_app.yml
   tags:

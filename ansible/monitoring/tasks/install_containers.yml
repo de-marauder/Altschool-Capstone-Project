@@ -16,8 +16,7 @@
     - prometheus/data
     - grafana
     - blackbox
-    - alertmanager
-    # - snmp_exporter
+
 - name: Deploy container config files
   copy:
     src: "{{ item }}"
@@ -32,6 +31,13 @@
   - prometheus/prometheus.yml
   - prometheus/web-config.yml
   # - snmp_exporter/snmp.yml
+
+- name: Deploy prometheus alert files
+  copy:
+    src: "{{ item }}"
+    dest: "/srv/{{ item }}"
+  loop:
+  - prometheus/alert.rules.yml
 
 ##############
 # Containers #

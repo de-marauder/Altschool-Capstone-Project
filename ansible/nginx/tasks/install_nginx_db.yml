@@ -10,7 +10,7 @@
 #     mode: a+r
 #   tags:
 #   - db
-#   - server
+#   - monitor
 ################################################################################
 
 
@@ -58,8 +58,3 @@
   vars:
     ansible_python_interpreter: "{{ ansible_playbook_python }}"
     docker_command: "docker exec -i nginx sh"
-
-  # register: command_output
-# - name: Display command output
-#   debug:
-#     var: command_output.stdout_lines

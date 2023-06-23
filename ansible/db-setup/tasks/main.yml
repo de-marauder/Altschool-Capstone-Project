@@ -24,9 +24,4 @@
   import_tasks: install_db.yml
   tags:
     - db
-
-# - name: Install nginx reverse proxy
-#   import_tasks: install_nginx.yml
-#   tags: db
-
-
+    

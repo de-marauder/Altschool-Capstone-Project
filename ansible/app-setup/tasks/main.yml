@@ -24,8 +24,3 @@
   import_tasks: install_apps.yml
   tags:
     - app
-    
-# - name: Install nginx reverse proxy
-#   import_tasks: install_nginx.yml
-
-

@@ -73,7 +73,7 @@ scrape_configs:
       - targets: [
         'prom.monitoring.de-marauder.me',
         'grafana.monitoring.de-marauder.me',
-        'app.de-marauder.me'
+        'app.de-marauder.me',
         'db.de-marauder.me'
         ]
     relabel_configs:
@@ -83,3 +83,11 @@ scrape_configs:
       target_label: instance
     - target_label: __address__
       replacement: blackbox:9115  # The blackbox exporter's real hostname:port.
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+rule_files:
+  - alert.rules.yml

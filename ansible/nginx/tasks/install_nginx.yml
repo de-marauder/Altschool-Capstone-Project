@@ -10,4 +10,4 @@
     - nginx/logs
   tags:
     - agent
-    - server
+    - monitor

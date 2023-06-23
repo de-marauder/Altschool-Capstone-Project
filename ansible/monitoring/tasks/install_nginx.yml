@@ -1,13 +1,4 @@
 ---
-# Make srv nginx folder
-# - name: install nginx
-#   apt:
-#     name: nginx
-#     state: latest
-#   tags:
-#     - server
-#     - agent
-
 - name: Create folders
   file:
     state: directory
@@ -19,7 +10,7 @@
   - nginx/logs
   tags:
   - agent
-  - server
+  - monitor
 
 # Configure NGINX
 # - name: Create private key (RSA, 4096 bits)
@@ -27,7 +18,7 @@
 #     path: "/srv/nginx/certificate.key"
 #   tags:
 #   - agent
-#   - server
+#   - monitor
 # - name: Create simple self-signed certificate
 #   community.crypto.x509_certificate:
 #     path: /srv/nginx/certificate.pem
@@ -35,7 +26,7 @@
 #     provider: selfsigned
 #   tags:
 #   - agent
-#   - server
+#   - monitor
 
 ################################################################################
 # Replace later
@@ -48,27 +39,15 @@
 #     mode: a+r
 #   tags:
 #   - agent
-#   - server
+#   - monitor
 ################################################################################
 
-# - name: Copy monitor server nginx config
-#   template:
-#     src: nginx/monitor_server_nginx.conf
-#     dest: /etc/nginx/nginx.conf
-#   tags:
-#   - server
-# - name: Copy monitor server nginx config
-#   template:
-#     src: nginx/agent_server_nginx.conf
-#     dest: /etc/nginx/nginx.conf
-#   tags:
-#   - agent
 - name: Copy the servers nginx configuration
   template:
     src: nginx/server_nginx.conf
     dest: /srv/nginx/nginx.conf
   tags:
-  - server
+  - monitor
 - name: Copy the agent nginx configuration
   template:
     src: nginx/agent_nginx.conf
@@ -98,7 +77,7 @@
       source=/srv/nginx
       target=/etc/nginx
   tags:
-  - server
+  - monitor
 - name: Deploy nginx
   docker_container:
     image: nginx:1.23.1-alpine
@@ -131,7 +110,7 @@
     '
   run_once: true
   loop: "{{ certbot_site_names }}"
-  tags: server
+  tags: monitor
   vars:
     ansible_python_interpreter: "{{ ansible_playbook_python }}"
     docker_command: "docker exec -i nginx sh"
@@ -149,9 +128,3 @@
   vars:
     ansible_python_interpreter: "{{ ansible_playbook_python }}"
     docker_command: "docker exec -i nginx sh"
-
-  # register: command_output
-
-# - name: Display command output
-#   debug:
-#     var: command_output.stdout_lines

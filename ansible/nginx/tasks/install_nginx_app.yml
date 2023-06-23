@@ -10,7 +10,7 @@
 #     mode: a+r
 #   tags:
 #   - app
-#   - server
+#   - monitor
 ################################################################################
 
 - name: Copy the app nginx configuration

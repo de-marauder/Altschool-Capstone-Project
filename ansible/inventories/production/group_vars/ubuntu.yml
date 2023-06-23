@@ -28,6 +28,7 @@ certbot_site_names:
   - "node.monitoring.de-marauder.me"
   - "cadvisor.monitoring.de-marauder.me"
   - "docker.monitoring.de-marauder.me"
+  - "alert.monitoring.de-marauder.me"
 certbot_db_site_name:
   - "db.de-marauder.me"
 certbot_db_site_names:
@@ -45,3 +46,4 @@ db_password: root
 
 smtp_username: chiezike16
 smtp_password: jmcxjnoteyvppwcs
+slack_webhook: https://hooks.slack.com/services/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
