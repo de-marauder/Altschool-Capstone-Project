@@ -1,33 +1,39 @@
-name: Terraform CI-CD
+#name: Terraform CI-CD, Build Docker Image and Push#
 
-on:
+#on:
   push:
     branches:
-    - main
+      - main
     paths:
-    - Infrastructure/**
-    
-permissions:
-   contents: read
-   pull-requests: write
-    
+      - Infrastructure/**
+      
+#permissions:
+  contents: read
+  pull-requests: write
+
+# Allows you to run this workflow manually from the Actions tab
+#workflow_dispatch:
+   
 env:
 #TERRAFORM
   TF_CLOUD_ORGANIZATION: "group23"
-  TF_API_TOKEN: ${{ TF_API_TOKEN }}
+  TF_API_TOKEN: ${{ secret.TF_API_TOKEN }}
   TF_WORKSPACE: "group23"
   TF_ACTION_WORKING_DIR: 'Infrastructure'
 #AWS
   AWS_REGION: "eu-west-2"
   AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#GITHUB
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
-  
 
-jobs:
-   terraform-setup:
+#GITHUB
+  #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#############################################
+#                                           #
+#             TERRAFORM                     #
+#                                           #
+#############################################
+#jobs:
+  terraform-setup:
     name: Terraform CI-CD
     runs-on: ${{ matrix.os }}
     strategy:
@@ -40,27 +46,27 @@ jobs:
     
     
     steps:
-      - name: Checkout
+      - name: Checkout codebase
         uses: actions/checkout@v3
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-
+       
       - name: Setup terraform
         uses: hashicorp/setup-terraform@v2.2.1
         with:
-          #cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          #cli_config_credentials_token: ${{ env.TF_API_TOKEN }}
           terraform_version: 1.1.9
           terraform_wrapper: false
     
       - name: Install Terraform
         uses: little-core-labs/install-terraform@v2.0.0
         with:
-          #cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          #cli_config_credentials_token: ${{ env.TF_API_TOKEN }}
           version: 0.13.4
 
       - name: Confirm Install
@@ -72,9 +78,9 @@ jobs:
         run: terraform init
         #uses: hashicorp/terraform-github-actions/init@v0.4.0
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ ENV.AWS_REGION }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
         shell: bash
           #run: terraform init -input=false
@@ -95,8 +101,8 @@ jobs:
           terraform plan -input=false -no-color -out tf.plan
        # uses: hashicorp/terraform-github-actions/plan@v0.14.0
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
           #run: terraform plan -input=false
         #with:
@@ -117,9 +123,9 @@ jobs:
         run: terraform show -no-color tf.plan 2>&1 > /tmp/plan.txt
         working-directory: .${{ env.TF_ACTION_WORKING_DIR }}
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ ENV.AWS_REGION }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
         shell: bash
       
 
@@ -129,15 +135,16 @@ jobs:
         run: terraform apply -input=false tf.plan
        # uses: hashicorp/terraform-github-actions/apply@v0.14.0
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ ENV.AWS_REGION }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
         shell: bash
           #run: terraform apply -auto-approve -input=false 
        #with:
           #version: 0.13.4
           # auto_approve: true
+          
           
 
 

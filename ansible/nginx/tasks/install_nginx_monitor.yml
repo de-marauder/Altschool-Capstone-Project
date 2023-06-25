@@ -1,0 +1,60 @@
+---
+################################################################################
+# Replace later
+################################################################################
+# - name: Add a user to a password file and ensure permissions are set
+#   community.general.htpasswd:
+#     path: /srv/nginx/.htpasswd
+#     name: "{{ htaccessusr }}"
+#     password: '{{ htaccesspwd }}'
+#     mode: a+r
+#   tags:
+#   - agent
+#   - monitor
+################################################################################
+
+- name: Copy the servers nginx configuration
+  template:
+    src: nginx/monitor_nginx.conf
+    dest: /srv/nginx/nginx.conf
+  tags:
+    - monitor
+
+# Reverse proxy
+- name: Deploy nginx on monitor server
+  docker_container:
+    image: nginx:1.23.1-alpine
+    name: nginx
+    restart_policy: always
+    restart: yes
+    networks: name=monitoring
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3100:3100"
+      - "9090:9090"
+      - "9093:9093"
+      - "9100:9100"
+      - "9323:9323"
+      - "9324:9324"
+    mounts: type=bind
+      source=/srv/nginx
+      target=/etc/nginx
+  tags:
+    - monitor
+
+- name: Grant SSL certs inside nginx Docker container
+  shell: |
+    docker exec -i nginx sh -c '
+    apk update
+    apk add certbot-nginx
+    certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
+    # certbot --{{ certbot_plugin }} install -d  {{ item }} --agree-tos --noninteractive --redirect
+    '
+  run_once: true
+  loop: "{{ certbot_site_names }}"
+  tags:
+    - monitor
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    docker_command: "docker exec -i nginx sh"

@@ -1,0 +1,12 @@
+[Unit]
+Description=Alertmanager
+Documentation=https://prometheus.io/docs/alerting/alertmanager/
+
+[Service]
+ExecStart=/usr/bin/alertmanager \
+  --config.file /etc/alertmanager/alertmanager.yml \
+  --web.external-url http://localhost:9093
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
