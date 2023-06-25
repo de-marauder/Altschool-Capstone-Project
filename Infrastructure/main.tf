@@ -336,18 +336,11 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-# Create key pair
-resource "aws_key_pair" "Capstone_keypair" {
-  key_name   = "Capstone_keypair"
-  public_key = file("~/.ssh/id_rsa.pub")  
-}
-
 # create application server 1
 resource "aws_instance" "server_1" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
-  key_name      = aws_key_pair.Capstone_keypair.key_name 
-
+  key_name   = "Capstone_keypair"
   vpc_security_group_ids = [aws_security_group.capstone_security_grp_rule.id]
   subnet_id              = aws_subnet.capstone_public_subnet1.id
 
@@ -360,7 +353,7 @@ resource "aws_instance" "server_1" {
 resource "aws_instance" "server_2" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
-  key_name      = aws_key_pair.Capstone_keypair.key_name 
+  key_name   = "Capstone_keypair" 
 
   vpc_security_group_ids = [aws_security_group.capstone_security_grp_rule.id]
   subnet_id              = aws_subnet.capstone_public_subnet2.id
@@ -374,7 +367,7 @@ resource "aws_instance" "server_2" {
 resource "aws_instance" "database_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
-  key_name      = aws_key_pair.Capstone_keypair.key_name 
+  key_name   = "Capstone_keypair" 
 
   vpc_security_group_ids = [aws_security_group.database_security_group.id]
   subnet_id              = aws_subnet.capstone_private_subnet.id
@@ -388,7 +381,7 @@ resource "aws_instance" "database_server" {
 resource "aws_instance" "monitoring_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.montoring_instance_type
-  key_name      = aws_key_pair.Capstone_keypair.key_name
+  key_name   = "Capstone_keypair"
   vpc_security_group_ids = [aws_security_group.monitoring_security_group.id]
   subnet_id              = aws_subnet.capstone_public_subnet1.id
 
@@ -402,7 +395,7 @@ resource "aws_instance" "monitoring_server" {
 resource "aws_instance" "bastion_host" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
-  key_name      = aws_key_pair.Capstone_keypair.key_name 
+  key_name   = "Capstone_keypair" 
 
   vpc_security_group_ids = [aws_security_group.bastion_security_group.id]
   subnet_id              = aws_subnet.capstone_public_subnet1.id
