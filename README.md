@@ -3,24 +3,36 @@
 
 <img src='./assets/architecture-diagram.png' alt='Architectural diagram'>
 
+This repo contains a full setup for managing an application. From the application code, to infrastructure managed by terraform and ansible. It also showcases how CICD can be implemented for fast delivery of code changes in the application and in terraform. 
+
+Site reliability is monitored using grafana, prometheus, loki and alertmanager. Node agents such as node_exporter, blackbox, cadvisor and docker-metrics were used to expose server metrics, container metrics and application health metrics.
+
+Security was taken seriously and SSL certs were generated for all http traffic. Also, the database is housed in a private subnet safe from the general internet.
+
+
 # Configuration Management
 
-Configuration is handled using ansible. Config files can be found [here](./ansible).
+All configuration is handled using ansible. From setting up the database and application to implementing monitoring. 
 
-For initial setup, an ansible role is used to setup monitoring on all servers.
+Config files can be found [here](./ansible).
 
+## Procedure
 
+Setup the database.
 ```bash
-ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/ --tags monitor --limit 'monitoring-server' --private-key <path-to-private-key-file>
+ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/servers.yml --tags db,agent --limit 'db-server'
 ```
 
+Setup the application on all application servers.
 ```bash
-ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/ --tags db,agent --limit 'db-server' --private-key <path-to-private-key-file>
+ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/servers.yml --tags app,agent --limit 'application'
 ```
 
+Setup monitoring server.
 ```bash
-ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/ --tags app,agent --limit 'app-server' --private-key <path-to-private-key-file>
+ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/servers.yml --tags monitor --limit 'monitoring-server'
 ```
+
 
 
 ##CI/CD Documentation

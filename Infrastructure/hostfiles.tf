@@ -28,7 +28,7 @@ all:
                       ansible_host: ${aws_instance.database_server.private_ip}
                       ansible_user :  ubuntu
                       ansible_port :  2200
-                      ansible_ssh_common_args: '-o IdentityFile=${var.keypair_filename}.pem -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i ${var.keypair_filename}.pem ubuntu@18.130.83.54 -p 2200 -W %h:%p"'
+                      ansible_ssh_common_args: '-o IdentityFile=${var.keypair_filename}.pem -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i ${var.keypair_filename}.pem ubuntu@${aws_instance.bastion_host.public_ip} -p 2200 -W %h:%p"'
 
                 bastion:
                   hosts:

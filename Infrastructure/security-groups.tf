@@ -47,10 +47,10 @@ resource "aws_security_group" "capstone_security_grp_rule" {
     cidr_blocks     = ["0.0.0.0/0"]
     security_groups = [aws_security_group.capstone_load_balancer_sg.id]
   }
-  ingress {
+   ingress {
+    from_port   = 22
+    to_port     = 22
     description = "SSH"
-    from_port   = 2200
-    to_port     = 2200
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -130,14 +130,14 @@ resource "aws_security_group" "database_security_group" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [aws_security_group.capstone_security_grp_rule.id]
+    cidr_blocks = ["${aws_instance.bastion_host.private_ip}/32"]
   }
   ingress {
     description     = "Allow SSH access from the bastion host"
     from_port       = 2200
     to_port         = 2200
     protocol        = "tcp"
-    security_groups = [aws_security_group.capstone_security_grp_rule.id]
+    cidr_blocks = ["${aws_instance.bastion_host.private_ip}/32"]
   }
   ingress {
     description = "Allow incoming MongoDB traffic from the frontend instance"

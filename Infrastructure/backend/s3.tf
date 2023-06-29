@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 
-resource "aws_s3_bucket" "example" {
+resource "aws_s3_bucket" "backend" {
   bucket = var.s3_bucket
 
   tags = {

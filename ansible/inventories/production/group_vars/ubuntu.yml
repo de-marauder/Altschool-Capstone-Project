@@ -15,16 +15,17 @@ htaccesspwd: "monitor-password"
 
 timezone: "Africa/Lagos"
 
-certbot_app_1_site_names:  
-  - "node.app-1.de-marauder.me"
-  - "docker.app-1.de-marauder.me"
-  - "cadvisor.app-1.de-marauder.me"
-certbot_app_2_site_names:  
-  - "node.app-2.de-marauder.me"
-  - "docker.app-2.de-marauder.me"
-  - "cadvisor.app-2.de-marauder.me"
+certbot_app_site_names:
+  app_1:
+    - "node.app-1.de-marauder.me"
+    - "docker.app-1.de-marauder.me"
+    - "cadvisor.app-1.de-marauder.me"
+  app_2:
+    - "node.app-2.de-marauder.me"
+    - "docker.app-2.de-marauder.me"
+    - "cadvisor.app-2.de-marauder.me"
 
-certbot_site_names:  
+certbot_site_names:
   - "grafana.monitoring.de-marauder.me"
   - "prom.monitoring.de-marauder.me"
   - "loki.monitoring.de-marauder.me"

@@ -6,5 +6,5 @@ variable "region" {
 
 variable "s3_bucket" {
   description = "s3_bucket"
-  default = "capstone-state-bucket"
+  default = "altschool-capstone-state-bucket"
 }

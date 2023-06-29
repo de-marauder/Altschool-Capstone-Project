@@ -37,18 +37,19 @@ resource "aws_instance" "database_server" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo su -c 'echo Port 2200 >> /etc/ssh/sshd_config' && systemctl restart sshd.service"
+      "sudo su -c 'echo Port 2200 >> /etc/ssh/sshd_config && systemctl restart sshd.service'"
     ]
 
     connection {
       type                = "ssh"
+      bastion_port        = 2200
       bastion_host        = aws_instance.bastion_host.public_ip
       bastion_user        = "ubuntu"                            // Or the appropriate SSH user for the bastion host
       bastion_private_key = tls_private_key.rsa.private_key_pem // Path to the private key for the bastion host
       host                = self.private_ip
       user                = "ubuntu"                            // Or the appropriate SSH user for the private instance
       private_key         = tls_private_key.rsa.private_key_pem // Path to the private key for the private instance
-      port                = 2200
+      port                = 22
     }
   }
 
@@ -82,7 +83,7 @@ resource "aws_instance" "bastion_host" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo su -c 'echo Port 2200 >> /etc/ssh/sshd_config' && systemctl restart sshd.service"
+      "sudo su -c 'echo Port 2200 >> /etc/ssh/sshd_config && systemctl restart sshd.service'"
     ]
 
     connection {

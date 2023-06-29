@@ -19,6 +19,8 @@
     dest: /srv/nginx/nginx.conf
   tags:
     - monitor
+    - nginx-monitor
+    - nginx-monitor-config
 
 # Reverse proxy
 - name: Deploy nginx on monitor server
@@ -42,6 +44,7 @@
       target=/etc/nginx
   tags:
     - monitor
+    - nginx-monitor-restart
 
 - name: Grant SSL certs inside nginx Docker container
   shell: |
@@ -49,12 +52,13 @@
     apk update
     apk add certbot-nginx
     certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
-    # certbot --{{ certbot_plugin }} install -d  {{ item }} --agree-tos --noninteractive --redirect
     '
   run_once: true
   loop: "{{ certbot_site_names }}"
   tags:
     - monitor
+    - nginx-monitor
+    - nginx-monitor-cert
   vars:
     ansible_python_interpreter: "{{ ansible_playbook_python }}"
     docker_command: "docker exec -i nginx sh"

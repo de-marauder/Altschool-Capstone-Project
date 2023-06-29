@@ -1,26 +1,3 @@
-- name: Install Python Package
-  apt: name=python3 update_cache=yes state=latest
-
-- name: Install Let's Encrypt Package
-  apt:
-    name:
-      - certbot
-      - "{{ certbot_package }}"
-    update_cache: yes
-    state: latest
-  tags:
-    - monitor
-
-- name: Create and Install Cert Using {{ certbot_plugin }} Plugin
-  command: "certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect"
-  loop: "{{ certbot_site_names }}"
-  tags: monitor
-
-- name: Create and Install Cert Using {{ certbot_plugin }} Plugin
-  command: "certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect"
-  loop: "{{ certbot_agent_site_names }}"
-  tags: agent
-
 - name: Set Letsencrypt Cronjob for Certificate Auto Renewal
   cron: name=letsencrypt_renewal special_time=monthly job="/usr/bin/certbot renew"
   tags:
