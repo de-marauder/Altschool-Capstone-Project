@@ -110,10 +110,10 @@ jobs:
         id: init
         run: terraform init
         #uses: hashicorp/terraform-github-actions/init@v0.4.0
-        env:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+        #env:
+         # aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+        #  aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+         # aws-region: ${{ env.AWS_REGION }}
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
         shell:
           bash
@@ -133,9 +133,9 @@ jobs:
         run: |
           terraform plan -input=false -no-color -out tf.plan
         # uses: hashicorp/terraform-github-actions/plan@v0.14.0
-        env:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        #env:
+        #  aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+        #  aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
           #run: terraform plan -input=false
         #with:
@@ -154,10 +154,10 @@ jobs:
         id: show
         run: terraform show -no-color tf.plan 2>&1 > /tmp/plan.txt
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
-        env:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+       # env:
+         # aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+         # aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        #  aws-region: ${{ env.AWS_REGION }}
         shell: bash
 
       #terraform apply
@@ -165,10 +165,10 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -input=false tf.plan
         # uses: hashicorp/terraform-github-actions/apply@v0.14.0
-        env:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+       # env:
+       #   aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+        #  aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        #  aws-region: ${{ env.AWS_REGION }}
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
         shell:
           bash
