@@ -4,6 +4,11 @@ variable "region" {
   default = "eu-west-2"
 }
 
+variable "s3_bucket" {
+  description = "s3_bucket"
+  default = "capstone-state-bucket"
+}
+
 variable "av_zone1" {
   type        = string
   description = "Availability zone1"
