@@ -52,6 +52,16 @@ jobs:
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Add terraform user
+        run: |
+          echo '
+          
+          [terraform]
+          aws_access_key_id = ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key = ${{ env.AWS_SECRET_ACCESS_KEY }}
+          ' >> ~/.aws/credentials
+          cat ~/.aws/credentials 
+          
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh/
