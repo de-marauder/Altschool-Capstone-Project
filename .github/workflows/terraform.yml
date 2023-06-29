@@ -17,7 +17,7 @@ permissions:
 env:
   #TERRAFORM
   TF_CLOUD_ORGANIZATION: "group23"
-  TF_API_TOKEN: ${{ secret.TF_API_TOKEN }}
+  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
   TF_WORKSPACE: "group23"
   TF_ACTION_WORKING_DIR: "Infrastructure"
   #AWS
