@@ -35,6 +35,9 @@
     daemon_reload: yes
     state: restarted
     enabled: yes
+  tags: 
+    - node-restart
+
 - name: Download and unzip promtail
   ansible.builtin.unarchive:
     # src: "https://github.com/grafana/loki/releases/download/v2.6.1/promtail-linux-{{'arm64' if ansible_architecture == 'aarch64' else 'amd64'}}.zip"
@@ -94,6 +97,9 @@
 # Can't be run on ARM without a re-compile
 - name: Start cadvisor
   docker_container:
+    restart_policy: unless-stopped
+    restart: true
+    timeout: 120
     recreate: true
     image: "gcr.io/cadvisor/cadvisor:latest"
     name: "cadvisor"
@@ -104,3 +110,5 @@
       - /var/lib/docker/:/var/lib/docker:ro
     networks: name=monitoring
   when: ansible_architecture != "aarch64"
+  tags:
+    - cadvisor-restart
