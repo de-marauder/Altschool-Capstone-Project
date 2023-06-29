@@ -54,12 +54,33 @@ jobs:
 
       - name: Add terraform user
         run: |
+
+          mkdir -p ~/.aws
+
+          mkdir -p ~/.aws
+
+          touch ~/.aws/config
+
+          touch ~/.aws/credentials
+
           echo '
-          
+
+          [profile terraform]
+
+          region = us-east-1
+
+          ' >> ~/.aws/config
+
+          echo '
+
           [terraform]
+
           aws_access_key_id = ${{ env.AWS_ACCESS_KEY_ID }}
+
           aws_secret_access_key = ${{ env.AWS_SECRET_ACCESS_KEY }}
+
           ' >> ~/.aws/credentials
+
           cat ~/.aws/credentials 
           
       - name: Set up SSH key
@@ -155,6 +176,11 @@ jobs:
         #with:
         #version: 0.13.4
         # auto_approve: true
+      - name: Clean up
+
+        run: |
+
+          rm -rf ~/.aws
 # - name: Terraform Apply
 #   run: |
 #     terraform init
