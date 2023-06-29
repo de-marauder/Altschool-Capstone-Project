@@ -21,7 +21,7 @@ env:
   TF_WORKSPACE: "group23"
   TF_ACTION_WORKING_DIR: "Infrastructure"
   #AWS
-  AWS_REGION: eu-west-2
+  AWS_REGION: "eu-west-2"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_KEY_PAIR: ${{ secrets.AWS_KEY_PAIR }}
