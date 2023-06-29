@@ -97,6 +97,7 @@
     networks:
       name=monitoring
   tags: prom
+  
 # Grafana
 - name: Deploy Grafana
   docker_container:

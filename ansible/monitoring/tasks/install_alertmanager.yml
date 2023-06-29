@@ -18,12 +18,6 @@
   tags:
     - monitor
 
-
-# - name: Create Alertmanager service file
-#   template:
-#     src: alertmanager.service.j2
-#     dest: /etc/alertmanager/system/alertmanager.service
-
 - name: Install Alertmanager
   docker_container:
     name: alertmanager
@@ -44,18 +38,3 @@
       name=monitoring
   tags:
     - monitor
-
-
-# - name: Start Alertmanager service
-#   systemd:
-#     name: alertmanager
-#     state: started
-#     enabled: yes
-
-# - name: Restart and enable the alertmanager service
-#   service:
-#     name: alertmanager
-#     daemon_reload: yes
-#     state: restarted
-#     enabled: yes
-    
