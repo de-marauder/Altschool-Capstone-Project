@@ -9,6 +9,13 @@ Site reliability is monitored using grafana, prometheus, loki and alertmanager. 
 
 Security was taken seriously and SSL certs were generated for all http traffic. Also, the database is housed in a private subnet safe from the general internet.
 
+## Relevant links
+
+- (App)[https://app.de-marauder.me]
+- (Prometheus)[https://prom.monitoring.de-marauder.me]
+- (Grafana)[https://grafana.monitoring.de-marauder.me] `user: admin; password: admin`
+- (alertmanager)[https://alert.monitoring.de-marauder.me]
+
 
 # Configuration Management
 
