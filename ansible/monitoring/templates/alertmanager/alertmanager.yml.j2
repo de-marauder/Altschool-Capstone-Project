@@ -20,7 +20,7 @@ receivers:
     send_resolved: true
 
   slack_configs:
-  - api_url: '{{ slack_webhook }}'
+  - api_url: 'https://hooks.slack.com/services/{{ slack_webhook_id }}'
     channel: '#alerts'
     send_resolved: true
 

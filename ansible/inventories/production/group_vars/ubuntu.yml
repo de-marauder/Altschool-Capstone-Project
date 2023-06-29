@@ -49,4 +49,4 @@ db_ip: 10.0.3.7
 
 smtp_username: chiezike16
 smtp_password: jmcxjnoteyvppwcs
-slack_webhook: https://hooks.slack.com/services/SLACK_WEBHOOK
+slack_webhook_id: SLACK_WEBHOOK
