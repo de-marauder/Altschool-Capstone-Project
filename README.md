@@ -11,10 +11,10 @@ Security was taken seriously and SSL certs were generated for all http traffic. 
 
 ## Relevant links
 
-- (App)[https://app.de-marauder.me]
-- (Prometheus)[https://prom.monitoring.de-marauder.me]
-- (Grafana)[https://grafana.monitoring.de-marauder.me] `user: admin; password: admin`
-- (alertmanager)[https://alert.monitoring.de-marauder.me]
+- [App](https://app.de-marauder.me)
+- [Prometheus](https://prom.monitoring.de-marauder.me)
+- [Grafana](https://grafana.monitoring.de-marauder.me) `user: admin; password: admin`
+- [alertmanager](https://alert.monitoring.de-marauder.me)
 
 
 # Configuration Management
