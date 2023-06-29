@@ -17,6 +17,7 @@
     dest: /srv/alertmanager/alertmanager.yml
   tags:
     - monitor
+    - alert
 
 - name: Install Alertmanager
   docker_container:
@@ -38,3 +39,4 @@
       name=monitoring
   tags:
     - monitor
+    - alert
