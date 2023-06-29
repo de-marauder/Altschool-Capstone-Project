@@ -21,6 +21,7 @@
   tags:
     - db
     - nginx-db
+    - nginx-db-config
 
 # Reverse proxy
 - name: Deploy nginx on dbs
@@ -45,6 +46,7 @@
   tags:
     - db
     - nginx-db
+    - nginx-db-restart
 
 # - name: Grant SSL certs inside nginx Docker container for dbs
 #   shell: |
