@@ -46,7 +46,7 @@ certbot_mail_address: chiezike16@gmail.com
 
 db_user: root
 db_password: root
-db_ip: 10.0.3.7
+db_ip: 10.0.3.134
 
 smtp_username: chiezike16
 smtp_password: jmcxjnoteyvppwcs
