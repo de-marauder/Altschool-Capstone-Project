@@ -24,6 +24,7 @@ env:
   AWS_REGION: "eu-west-2"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_KEY_PAIR: ${{ secrets.AWS_KEY_PAIR }}
 
   #GITHUB
   #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,6 +55,12 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ env.AWS_KEY_PAIR }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: Setup terraform
         uses: hashicorp/setup-terraform@v2.2.1
@@ -102,8 +109,7 @@ jobs:
         env:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        working-directory:
-          ${{ env.TF_ACTION_WORKING_DIR }}
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
           #run: terraform plan -input=false
         #with:
         #version: 0.13.4
@@ -120,7 +126,7 @@ jobs:
       - name: Terraform Show
         id: show
         run: terraform show -no-color tf.plan 2>&1 > /tmp/plan.txt
-        working-directory: .${{ env.TF_ACTION_WORKING_DIR }}
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
         env:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
