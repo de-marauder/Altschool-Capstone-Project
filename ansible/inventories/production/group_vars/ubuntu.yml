@@ -15,13 +15,16 @@ htaccesspwd: "monitor-password"
 
 timezone: "Africa/Lagos"
 
-certbot_app_site_names:  
-  - "app.de-marauder.me"
-  - "node.app.de-marauder.me"
-  - "docker.app.de-marauder.me"
-  - "cadvisor.app.de-marauder.me"
+certbot_app_1_site_names:  
+  - "node.app-1.de-marauder.me"
+  - "docker.app-1.de-marauder.me"
+  - "cadvisor.app-1.de-marauder.me"
+certbot_app_2_site_names:  
+  - "node.app-2.de-marauder.me"
+  - "docker.app-2.de-marauder.me"
+  - "cadvisor.app-2.de-marauder.me"
+
 certbot_site_names:  
-  - "monitoring.de-marauder.me"
   - "grafana.monitoring.de-marauder.me"
   - "prom.monitoring.de-marauder.me"
   - "loki.monitoring.de-marauder.me"
@@ -29,8 +32,7 @@ certbot_site_names:
   - "cadvisor.monitoring.de-marauder.me"
   - "docker.monitoring.de-marauder.me"
   - "alert.monitoring.de-marauder.me"
-certbot_db_site_name:
-  - "db.de-marauder.me"
+
 certbot_db_site_names:
   - "db.de-marauder.me"
   - "node.db.de-marauder.me"
@@ -43,6 +45,7 @@ certbot_mail_address: chiezike16@gmail.com
 
 db_user: root
 db_password: root
+db_ip: 10.0.3.7
 
 smtp_username: chiezike16
 smtp_password: jmcxjnoteyvppwcs

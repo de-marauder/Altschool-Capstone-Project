@@ -1,0 +1,50 @@
+---
+all:
+  children:
+    servers:
+      children:
+        local:
+          children:
+            ubuntu:
+              children:
+                application:
+                  hosts:
+                    app-server-1:
+                      ansible_host: 18.130.179.197
+                      ansible_user :  ubuntu
+                      # private_key :  capstone-test-key.pem
+                      # private_key :  ../Capstone_keypair.pem
+                      ansible_ssh_common_args: '-o IdentityFile=capstone-test-key.pem -o StrictHostKeyChecking=no'
+                    app-server-2:
+                      ansible_host: 18.133.27.36
+                      ansible_user :  ubuntu
+                      ansible_ssh_common_args: '-o IdentityFile=capstone-test-key.pem -o StrictHostKeyChecking=no'
+                      # private_key :  capstone-test-key.pem
+                      # private_key :  ../Capstone_keypair.pem
+                database:
+                  hosts:
+                    db-server:
+                      ansible_host: 10.0.3.7
+                      ansible_user :  ubuntu
+                      ansible_port :  2200
+                      # private_key :  capstone-test-key.pem
+                      # private_key :  ../Capstone_keypair.pem
+                      ansible_ssh_common_args: '-o IdentityFile=capstone-test-key.pem -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i capstone-test-key.pem ubuntu@18.130.83.54 -p 2200 -W %h:%p"'
+                bastion:
+                  hosts:
+                    bastion-server:
+                      ansible_host: 18.130.83.54
+                      ansible_user :  ubuntu
+                      ansible_port: 2200
+                      ansible_ssh_common_args: '-o IdentityFile=capstone-test-key.pem -o StrictHostKeyChecking=no'
+                      # private_key :  capstone-test-key.pem
+                      # private_key :  Capstone_keypair.pem  
+
+                monitoring:
+                  hosts:
+                    monitoring-server:
+                      ansible_host: 18.170.213.4
+                      ansible_user :  ubuntu
+                      # private_key :  capstone-test-key.pem
+                      # private_key :  Capstone_keypair.pem
+                      ansible_ssh_common_args: '-o IdentityFile=capstone-test-key.pem -o StrictHostKeyChecking=no'

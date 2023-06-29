@@ -9,9 +9,6 @@ Configuration is handled using ansible. Config files can be found [here](./ansib
 
 For initial setup, an ansible role is used to setup monitoring on all servers.
 
-```bash
-ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/ --tags server --limit 'monitoring-server' --private-key <path-to-private-key-file>
-```
 
 ```bash
 ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/ --tags monitor --limit 'monitoring-server' --private-key <path-to-private-key-file>

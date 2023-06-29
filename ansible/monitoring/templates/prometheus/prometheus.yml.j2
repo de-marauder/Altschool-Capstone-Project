@@ -28,14 +28,22 @@ scrape_configs:
       'grafana.monitoring.de-marauder.me'
           ]
 # Node exporter
+  - job_name: 'node_exporter_db'
+    scheme: http
+    scrape_interval: 5s
+    static_configs:
+      - targets: [
+      '10.0.3.7:9100'
+          ]
+
   - job_name: 'node_exporter'
     scheme: https
     scrape_interval: 5s
     static_configs:
       - targets: [
       'node.monitoring.de-marauder.me',
-      'node.app.de-marauder.me',
-      'node.db.de-marauder.me'
+      'node.app-1.de-marauder.me',
+      'node.app-2.de-marauder.me',
           ]
     tls_config:
       insecure_skip_verify: true
@@ -43,35 +51,53 @@ scrape_configs:
 #      username: {{ htaccessusr }}
 #      password: {{ htaccesspwd }}
 # Docker metrics server
+  - job_name: 'docker_metrics_db'
+    scheme: http
+    scrape_interval: 5s
+    static_configs:
+      - targets: [
+      '10.0.3.7:9323'
+          ]
+
   - job_name: 'docker_metrics'
     scheme: https
     scrape_interval: 5s
     static_configs:
       - targets: [
       'docker.monitoring.de-marauder.me',
-      'docker.app.de-marauder.me',
-      'docker.db.de-marauder.me'
+      'docker.app-1.de-marauder.me',
+      'docker.app-2.de-marauder.me',
           ]
     tls_config:
       insecure_skip_verify: true
 #    basic_auth:
 #      username: {{ htaccessusr }}
 #      password: {{ htaccesspwd }}
+
 # Cadvisor
+  - job_name: 'cadvisor_db'
+    scrape_interval: 5s
+    scheme: http
+    static_configs:
+      - targets: [
+      '10.0.3.7:9324'
+          ]
+          
   - job_name: 'cadvisor'
     scrape_interval: 5s
     scheme: https
     static_configs:
       - targets: [
       'cadvisor.monitoring.de-marauder.me',
-      'cadvisor.app.de-marauder.me',
-      'cadvisor.db.de-marauder.me'
+      'cadvisor.app-1.de-marauder.me',
+      'cadvisor.app-2.de-marauder.me',
           ]
     tls_config:
       insecure_skip_verify: true
 #    basic_auth:
 #      username: {{ htaccessusr }}
 #      password: {{ htaccesspwd }}
+
 # Blackbox
   - job_name: 'blackbox'
     metrics_path: /probe
@@ -83,7 +109,7 @@ scrape_configs:
         'grafana.monitoring.de-marauder.me',
         'alert.monitoring.de-marauder.me',
         'app.de-marauder.me',
-        'db.de-marauder.me'
+        '10.0.3.7'
         ]
     relabel_configs:
     - source_labels: [__address__]

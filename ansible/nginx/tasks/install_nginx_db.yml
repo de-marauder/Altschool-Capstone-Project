@@ -20,6 +20,7 @@
     dest: /srv/nginx/nginx.conf
   tags:
     - db
+    - nginx-db
 
 # Reverse proxy
 - name: Deploy nginx on dbs
@@ -43,18 +44,19 @@
       target=/etc/nginx
   tags:
     - db
+    - nginx-db
 
-- name: Grant SSL certs inside nginx Docker container for dbs
-  shell: |
-    docker exec -i nginx sh -c '
-    apk update
-    apk add certbot-nginx
-    certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
-    '
-  run_once: true
-  loop: "{{ certbot_db_site_names }}"
-  tags:
-    - db
-  vars:
-    ansible_python_interpreter: "{{ ansible_playbook_python }}"
-    docker_command: "docker exec -i nginx sh"
+# - name: Grant SSL certs inside nginx Docker container for dbs
+#   shell: |
+#     docker exec -i nginx sh -c '
+#     apk update
+#     apk add certbot-nginx
+#     certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
+#     '
+#   run_once: true
+#   loop: "{{ certbot_db_site_names }}"
+#   tags:
+#     - db
+#   vars:
+#     ansible_python_interpreter: "{{ ansible_playbook_python }}"
+#     docker_command: "docker exec -i nginx sh"

@@ -19,6 +19,7 @@
     dest: /srv/nginx/nginx.conf
   tags:
     - app
+    - nginx
 
 # Reverse proxy
 - name: Deploy nginx on application server
@@ -41,9 +42,10 @@
       source=/srv/nginx
       target=/etc/nginx
   tags:
+    - nginx-app
     - app
 
-- name: Grant SSL certs inside nginx Docker container for apps
+- name: Grant SSL certs inside nginx Docker container for apps in {{inventory_hostname}}
   shell: |
     docker exec -i nginx sh -c '
     apk update
@@ -51,8 +53,27 @@
     certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
     '
   run_once: true
-  loop: "{{ certbot_app_site_names }}"
+  loop: "{{ certbot_app_site_names.app_1 }}"
+  when: inventory_hostname == "app-server-1"
   tags:
+    - nginx-app
+    - app
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    docker_command: "docker exec -i nginx sh"
+
+- name: Grant SSL certs inside nginx Docker container for apps in {{inventory_hostname}}
+  shell: |
+    docker exec -i nginx sh -c '
+    apk update
+    apk add certbot-nginx
+    certbot --{{ certbot_plugin }} -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect
+    '
+  run_once: true
+  loop: "{{ certbot_app_site_names.app_2 }}"
+  when: inventory_hostname == "app-server-2"
+  tags:
+    - nginx-app
     - app
   vars:
     ansible_python_interpreter: "{{ ansible_playbook_python }}"

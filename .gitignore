@@ -37,4 +37,4 @@ terraform.rc
 # ansible
 Capstone To-do List.pptx
 commands.file
-webserver-1.pem
+*.pem

@@ -17,3 +17,9 @@ ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/ --ta
 # ansible-playbook playbooks/deploy_monitoring.yml  -i inventories/production/ --tags agent --limit '<agent server group>:!<monitoring server>'
 # ansible-playbook playbook/deploy_monitoring.yml  -i inventories/production/ --tags agent --limit 'app-server' --private-key <path/to/keyfile>
 ```
+
+bastion jump server command
+
+```bash
+ssh -o ProxyCommand='ssh -i <private-key>.pem -p <port> -W %h:%p ubuntu@<bastion-server>' -p <port> -i <private-key>.pem ubuntu@<private-server>
+```

@@ -33,3 +33,18 @@ variable "domain_name" {
   type        = string
   description = "Domain name"
 }
+
+variable "keypair_filename" {
+  default    = "capstone-test-key"
+  type        = string
+  description = "capstone server private key"
+}
+
+variable "key_dir" {
+  default    = "../ansible/"
+  type        = string
+}
+variable "server_user" {
+  default    = "ubuntu"
+  type        = string
+}

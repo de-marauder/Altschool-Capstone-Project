@@ -58,3 +58,5 @@
       MONGO_INITDB_ROOT_USERNAME: "{{db_user}}"
       MONGO_INITDB_ROOT_PASSWORD: "{{db_password}}"
     networks: name=db
+  tags:
+    - restart-db

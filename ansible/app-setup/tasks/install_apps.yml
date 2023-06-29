@@ -26,5 +26,7 @@
     ports:
       - "5000:5000"
     env:
-      DATABASE_URL: mongodb://{{db_user}}:{{db_password}}@db.de-marauder.me
+      DATABASE_URL: mongodb://{{db_user}}:{{db_password}}@{{db_ip}}
     networks: name=app
+  tags:
+    - restart-app
