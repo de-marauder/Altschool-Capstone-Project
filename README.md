@@ -78,4 +78,15 @@ The yml file runs the "Terraform CI-CD" job
 
 - Terraform Apply as the name implies, uses the AWS Credentials set to Apply the Terraform Plan
 ```
+<br/><br/>
+### Images from Grafana Metrics Dashboard <br/><br/>
+<img src='./assets/grafana.png' alt='grafana'> <br/> <br/>
+<img src='./assets/grafana1.png' alt='grafana'> <br/> <br/>
 
+### Images from Prometheus Visualization <br/><br/>
+<img src='./assets/prometheus.png' alt='grafana'> <br/> <br/>
+<img src='./assets/prometheus1.png' alt='grafana'> <br/> <br/>
+
+### Images from Prometheus Status Visualization <br/><br/>
+<img src='./assets/prometheusstat.png' alt='grafana'> <br/> <br/>
+<img src='./assets/prometheusstat1.png' alt='grafana'> <br/> <br/>
